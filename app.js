@@ -12,33 +12,9 @@ require("dotenv").config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-var app = express();
+let config = {
 
-const bitrix24 = new b24.Bitrix24({
-  config: {
-    mode: "api",
-    host: process.env.BITRIX_HOST,
-    client_id: process.env.BITRIX_CLIENT_ID,
-    client_secret: process.env.BITRIX_CLIENT_SECRET,
-    redirect_uri: "http://localhost:3000/callback",
-  },
-  methods: {
-    async saveToken(data) {
-      //Save token to database
-      console.log("Should save token: ", data);
-    },
-    async retriveToken() {
-      //Retrive token from database
-      console.log("Should return token");
-      return {
-        access_token:
-          "d0ef535e0044d4e8003dc5b4000005ea100e0355b16b4989c6cc02dbfdbd20d8710f63",
-        refresh_token:
-          "d0ef535e0044d4e8003dc5b4000005ea100e0355b16b4989c6cc02dbfdbd20d8710f63",
-      };
-    },
-  },
-});
+};
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -57,6 +33,8 @@ app.get("/auth", (req, res) => {
   res.redirect(`${process.env.BITRIX_HOST}/oauth/authorize/?${query}`);
 });
 
+
+//ONAPPINSTALL
 app.post("/callback", async (req, res) => {
 
   const authObj = {
@@ -80,7 +58,7 @@ app.post("/callback", async (req, res) => {
 
   if(event === "ONAPPINSTALL") {
     const handlerBackUrl = `${process.env.SERVER_HOST}:${process.env.PORT}/`;
-    const response = await restCommand('imbot.register', {
+    const result = await restCommand('imbot.register', {
       'CODE': 'Test_bot',
       'TYPE': 'B',
       'EVENT_MESSAGE_ADD': handlerBackUrl,
@@ -97,10 +75,20 @@ app.post("/callback", async (req, res) => {
       }
       }, authObj
     );
-    result = await response.json();
     console.log('ONAPPINSTALL response: ', result);
   }
 
+});
+
+//ONIMBOTMESSAGEADD
+app.post("/", async (req, res) => {
+  console.log("post with body: ", req.body);
+  if(req.body.event) {
+    if(req.body.event === 'ONIMBOTMESSAGEADD') {
+      //Евгений test - 1819
+      sendMessage();
+    }
+  }
 });
 
 // Callback service parsing the authorization token and asking for the access token
@@ -159,8 +147,10 @@ const restCommand = async (method, params = {}, auth = [], authRefresh = true) =
     const response = await fetch(restCommandFetchUrl);
     result = await response.json();
     console.log('restCommand response: ', result);
+    return result;
   } catch(err) {
     console.log('restCommand fetch error: ', err);
+    return err;
   }
 
 	// if (authRefresh && isset($result['error']) && in_array($result['error'], array('expired_token', 'invalid_token')))
@@ -173,6 +163,68 @@ const restCommand = async (method, params = {}, auth = [], authRefresh = true) =
 	// }
 	// return $result;
 }
+
+const sendMessage = (userTo, botId = 1816, msg) => {
+  const result = restCommand('imbot.message.add', {
+    'BOT_ID': botId, // Идентификатор чат-бота, от которого идет запрос, можно не указывать, если чат-бот всего один
+    'DIALOG_ID': userTo, // Идентификатор диалога, это либо USER_ID пользователя, либо chatXX - где XX идентификатор чата, передается в событии ONIMBOTMESSAGEADD и ONIMJOINCHAT
+    'MESSAGE': msg, // Тест сообщения
+    // 'ATTACH': '', // Вложение, необязательное поле
+    // 'KEYBOARD': '', // Клавиатура, необязательное поле
+    // 'MENU': '', // Контекстное меню, необязательное поле 
+    // 'SYSTEM': 'N', // Отображать сообщения в виде системного сообщения, необязательное поле, по умолчанию 'N'
+    'URL_PREVIEW': 'Y' // Преобразовывать ссылки в rich-ссылки, необязательное поле, по умолчанию 'Y'
+  }, $_REQUEST["auth"]);
+  return result;
+}
+
+/**
+ * Get new authorize data if you authorize is expire.
+ *
+ * @param array $auth - Authorize data, received from event
+ * @return bool|mixed
+ */
+const restAuth = async (auth) => {
+
+	if(!isset(auth['refresh_token']))
+		return false;
+
+  const queryUrl = 'https://oauth.bitrix.info/oauth/token/';
+
+  const queryData = qs.stringify({
+    'grant_type': 'refresh_token',
+		'client_id': process.env.BITRIX_CLIENT_ID,
+		'client_secret': process.env.BITRIX_CLIENT_SECRET,
+		'refresh_token': auth['refresh_token']
+  });
+
+  // writeToLog(Array('URL' => queryUrl, 'PARAMS' => queryParams), 'ImBot request auth data');
+  
+  const response = await fetch(
+    `${queryUrl}?${query}`,
+  );
+  const data = await response.json();
+  console.log('Auth response: ', data);
+  
+    config.
+
+	// if (!isset($result['error']))
+	// {
+	// 	$appsConfig = Array();
+	// 	if (file_exists(__DIR__.'/config.php'))
+	// 		include(__DIR__.'/config.php');
+
+	// 	$result['application_token'] = $auth['application_token'];
+	// 	$appsConfig[$auth['application_token']]['AUTH'] = $result;
+	// 	saveParams($appsConfig);
+	// }
+	// else
+	// {
+	// 	$result = false;
+	// }
+
+	return $result;
+};
 
 module.exports = app;
 
