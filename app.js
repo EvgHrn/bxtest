@@ -33,11 +33,12 @@ try {
     .get("params")
     .cloneDeep()
     .value();
+  console.log("Got params from db: ", config);
 } catch (err) {
-  config = {};
+  console.log("Getting params from db error: ", err);
+  console.log("Reset config");
+  config = { "params": {} };
 }
-
-console.log("Init config: ", config);
 
 app.use(async (req, res, next) => {
 
@@ -113,7 +114,7 @@ app.use(async (req, res, next) => {
 
           saveParams(config);
 
-          console.log("New config: ", config);
+          console.log("New app config: ", config);
 
           // write debug log
           // writeToLog(Array($botId, $commandEcho, $commandHelp, $commandList), 'ImBot register');
@@ -493,10 +494,8 @@ app.use(async (req, res, next) => {
  * @return bool
  */
 const saveParams = (params) => {
-  db.set("params", {}).write();
-  db.get("params")
-    .push(params)
-    .write();
+  db.set("config", params).write();
+  console.log("Saved config: ", db.get("config").cloneDeep());
 	return true;
 }
 
