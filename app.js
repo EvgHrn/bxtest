@@ -30,7 +30,7 @@ let config;
 
 try {
   config = db
-    .get("params")
+    .get("config")
     .cloneDeep()
     .value();
   console.log("Got params from db: ", config);
@@ -48,6 +48,16 @@ app.use(async (req, res, next) => {
           console.log("ONIMBOTMESSAGEADD event with body: ", req.body);
           // check the event - authorize this event or not
           if (!config[req.body["auth"]["application_token"]]) return false;
+
+          const result = restCommand(
+            "imbot.message.add",
+            {
+              // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
+              DIALOG_ID: 1819,
+              MESSAGE: `Message from`,
+            },
+            req.body["auth"],
+          );
 
           // response time
           // $latency = (time()-$_REQUEST['ts']);
@@ -543,38 +553,43 @@ const restCommand = async (method, params ={}, auth = {}, authRefresh = true) =>
  * @return bool|mixed
  */
 const restAuth = async (auth) => {
-	if (!process.env.BITRIX_CLIENT_ID || !process.env.BITRIX_CLIENT_SECRET)
-		return false;
+  if (!process.env.BITRIX_CLIENT_ID || !process.env.BITRIX_CLIENT_SECRET) {
+    console.log('Error: No env vars');
+    return false;
+  }
 
-	if(!auth['refresh_token'])
-		return false;
+  if (!auth['refresh_token']) {
+    console.log("Error: No refresh_token");
+    return false;
+  }
 
-    const queryUrl = 'https://oauth.bitrix.info/oauth/token/';
-    
-    const queryData = querystring.stringify({
-        'grant_type': 'refresh_token',
-		'client_id': process.env.BITRIX_CLIENT_ID,
-		'client_secret': process.env.BITRIX_CLIENT_SECRET,
-		'refresh_token': auth['refresh_token'],
-    });
+  const queryUrl = 'https://oauth.bitrix.info/oauth/token/';
+  
+  const queryData = querystring.stringify({
+    'grant_type': 'refresh_token',
+    'client_id': process.env.BITRIX_CLIENT_ID,
+    'client_secret': process.env.BITRIX_CLIENT_SECRET,
+    'refresh_token': auth['refresh_token'],
+  });
 
-    // writeToLog(Array('URL' => $queryUrl, 'PARAMS' => $queryParams), 'ImBot request auth data');
+  // writeToLog(Array('URL' => $queryUrl, 'PARAMS' => $queryParams), 'ImBot request auth data');
 
-    let result;
+  let result;
 
-    try{
-        const response = await fetch(`${queryUrl}?${queryData}`);
-        result = await response.json();
-        console.log('restAuth response: ', result);
-    } catch(err) {
-        console.log('Auth fetch error: ', err);
-    }
+  try{
+    const response = await fetch(`${queryUrl}?${queryData}`);
+    result = await response.json();
+    console.log('restAuth response: ', result);
+  } catch(err) {
+    console.log('Auth fetch error: ', err);
+  }
 
-	if (!result['error']) {
-		result['application_token'] = auth['application_token'];
-        config[auth['application_token']]['AUTH'] = result;
-        console.log('New config: ', config);
-		// saveParams($appsConfig);
+  if (!result['error']) {
+    console.log("restAuth success");
+		result["application_token"] = auth['application_token'];
+    config[auth['application_token']]['AUTH'] = result;
+    console.log('New config: ', config);
+		saveParams(config);
 	} else {
 		result = false;
 	}
