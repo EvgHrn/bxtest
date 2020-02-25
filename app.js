@@ -131,12 +131,13 @@ const restCommand = async (method, params = {}, auth = [], authRefresh = true) =
     auth: auth["access_token"]
   });
 
+  const restCommandFetchUrl = `${queryUrl}${queryData}`;
+  console.log('restCommandFetchUrl: ', restCommandFetchUrl);
+
   let result;
 
 	try {
-    const response = await fetch(
-      `${queryUrl}${queryData}`,
-    );
+    const response = await fetch(restCommandFetchUrl);
     result = await response.json();
     console.log('restCommand response: ', result);
   } catch(err) {
