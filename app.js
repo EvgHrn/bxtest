@@ -26,54 +26,87 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let config = {};
 
-app.use(function(req, res, next) {
+app.use(async (req, res, next) => {
 
     if(req.body.event) {
-        switch (req.body.event) {
-            case 'ONIMBOTMESSAGEADD':
-                console.log('ONIMBOTMESSAGEADD event with body: ', req.body);
-                // check the event - authorize this event or not
-                if (!config[req.body['auth']['application_token']])
-                    return false;
+      switch (req.body.event) {
+        case "ONIMBOTMESSAGEADD":
+          console.log("ONIMBOTMESSAGEADD event with body: ", req.body);
+          // check the event - authorize this event or not
+          if (!config[req.body["auth"]["application_token"]]) return false;
 
-                // response time
-                // $latency = (time()-$_REQUEST['ts']);
-                // $latency = $latency > 60? (round($latency/60)).'m': $latency."s";
+          // response time
+          // $latency = (time()-$_REQUEST['ts']);
+          // $latency = $latency > 60? (round($latency/60)).'m': $latency."s";
 
-                // if (req.body['data']['PARAMS']['CHAT_ENTITY_TYPE'] === 'LINES') {
-                //     const message = req.body['data']['PARAMS']['MESSAGE'];
-                //     if (message === '1') {
-                //         $result = restCommand('imbot.message.add', Array(
-                //             "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
-                //             "MESSAGE" => 'Im EchoBot, i can repeat message after you and send menu in Open Channels![br]Look new chat-bot created specifically for Open Channels - [b]ITR Bot[/b] http://birix24.ru/~bot-itr',
-                //         ), $_REQUEST["auth"]);
-                //     }  else if ($message == '0') {
-                //         $result = restCommand('imbot.message.add', Array(
-                //             "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
-                //             "MESSAGE" => 'Wait for an answer!',
-                //         ), $_REQUEST["auth"]);
-                //     }
-                // } else {
-                //     // send answer message
-                //     $result = restCommand('imbot.message.add', Array(
-                //         "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
-                //         "MESSAGE" => "Message from bot",
-                //         "ATTACH" => Array(
-                //             Array("MESSAGE" => "reply: ".$_REQUEST['data']['PARAMS']['MESSAGE']),
-                //             Array("MESSAGE" => "latency: ".$latency)
-                //         )
-                //     ), $_REQUEST["auth"]);
-                // }
+          // if (req.body['data']['PARAMS']['CHAT_ENTITY_TYPE'] === 'LINES') {
+          //     const message = req.body['data']['PARAMS']['MESSAGE'];
+          //     if (message === '1') {
+          //         $result = restCommand('imbot.message.add', Array(
+          //             "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
+          //             "MESSAGE" => 'Im EchoBot, i can repeat message after you and send menu in Open Channels![br]Look new chat-bot created specifically for Open Channels - [b]ITR Bot[/b] http://birix24.ru/~bot-itr',
+          //         ), $_REQUEST["auth"]);
+          //     }  else if ($message == '0') {
+          //         $result = restCommand('imbot.message.add', Array(
+          //             "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
+          //             "MESSAGE" => 'Wait for an answer!',
+          //         ), $_REQUEST["auth"]);
+          //     }
+          // } else {
+          //     // send answer message
+          //     $result = restCommand('imbot.message.add', Array(
+          //         "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
+          //         "MESSAGE" => "Message from bot",
+          //         "ATTACH" => Array(
+          //             Array("MESSAGE" => "reply: ".$_REQUEST['data']['PARAMS']['MESSAGE']),
+          //             Array("MESSAGE" => "latency: ".$latency)
+          //         )
+          //     ), $_REQUEST["auth"]);
+          // }
 
-                // write debug log
-                // writeToLog($result, 'ImBot Event message add');
-              break;
-            // case value2:
-            //   break;
-            // case valueN:
-            //   break;
-            default:
-              break;
+          // write debug log
+          // writeToLog($result, 'ImBot Event message add');
+          break;
+        case "ONAPPINSTALL":
+          console.log("ONAPPINSTALL event with body: ", req.body);
+          handlerBackUrl = process.env.SERVER_HOST;
+          // register new bot
+          let result = await restCommand('imbot.register', {
+            'CODE': 'Test Factory Support',
+            'TYPE': 'B',
+            'EVENT_MESSAGE_ADD': handlerBackUrl,
+            'EVENT_WELCOME_MESSAGE': handlerBackUrl,
+            'EVENT_BOT_DELETE': handlerBackUrl,
+            // 'OPENLINE': 'Y', // this flag only for Open Channel mode http://bitrix24.ru/~bot-itr
+            'PROPERTIES': {
+              'NAME': 'Test factory support',
+              'COLOR': 'GREEN',
+              'EMAIL': 'test@test.ru',
+              'PERSONAL_BIRTHDAY': '2016-03-11',
+              'WORK_POSITION': 'Test factory support bot',
+              'PERSONAL_WWW': 'http://bitrix24.com',
+              'PERSONAL_GENDER': 'M',
+              // 'PERSONAL_PHOTO': base64_encode(file_get_contents(__DIR__.'/avatar.png')),
+            }
+          }, req.body["auth"]);
+
+          const botId = result['result'];
+
+          // save params
+          config[req.body["auth"]["application_token"]] = {
+            BOT_ID: botId,
+            AUTH: req.body["auth"]
+          };
+
+          console.log("New config: ", config);
+
+          // write debug log
+          // writeToLog(Array($botId, $commandEcho, $commandHelp, $commandList), 'ImBot register');
+          break;
+          // case valueN:
+          //   break;
+          default:
+            break;
         }
     }
     // next(createError(404));
