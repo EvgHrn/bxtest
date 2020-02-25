@@ -149,7 +149,7 @@ const restCommand = async (method, params = {}, auth = [], authRefresh = true) =
     auth: auth["access_token"]
   });
 
-  const restCommandFetchUrl = `${queryUrl}${queryData}`;
+  const restCommandFetchUrl = `${queryUrl}/?${queryData}`;
   console.log('restCommandFetchUrl: ', restCommandFetchUrl);
 
   let result;
