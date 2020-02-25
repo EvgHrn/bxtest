@@ -498,7 +498,7 @@ app.use(async (req, res, next) => {
  * @return mixed
  */
 const restCommand = async (method, params ={}, auth = {}, authRefresh = true) => {
-    const queryUrl = `${auth["client_endpoint"]}${$method}`;
+    const queryUrl = `${auth["client_endpoint"]}${method}`;
     const queryData = querystring.stringify({
         ...params,
         auth: auth["access_token"]
@@ -507,7 +507,7 @@ const restCommand = async (method, params ={}, auth = {}, authRefresh = true) =>
 
     let result;
     try{
-        const response = await fetch(`${queryUrl}?${queryData}`);
+        const response = await fetch(`${queryUrl}/?${queryData}`);
         result = await response.json();
         console.log('restCommand response: ', result);
     } catch(err) {
