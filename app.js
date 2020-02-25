@@ -57,7 +57,7 @@ app.get("/auth", (req, res) => {
 });
 
 // Callback service parsing the authorization token and asking for the access token
-app.get("/callback", async (req, res) => {
+app.get("/", async (req, res) => {
   try {
     console.log("callback with: ", req.query);
     const query = querystring.stringify({
