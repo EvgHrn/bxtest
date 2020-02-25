@@ -31,9 +31,9 @@ let config;
 try {
   config = db
     .get("config")
-    .cloneDeep()
-    .value();
+    .cloneDeep();
   console.log("Got params from db: ", config);
+  if (config === undefined) config = {};
 } catch (err) {
   console.log("Getting params from db error: ", err);
   console.log("Reset config");
@@ -41,6 +41,8 @@ try {
 }
 
 app.use(async (req, res, next) => {
+
+  console.log("New request: ", req.body);
 
   if (req.body.event) {
     let result;
