@@ -59,6 +59,7 @@ app.get("/auth", (req, res) => {
 app.post("/callback", async (req, res) => {
 
   console.log("callback event: ", req.body.event);
+  console.log("callback auth: ", req.body.auth);
   const event  = req.body.event;
 
   if(event === "ONAPPINSTALL") {
@@ -125,6 +126,8 @@ app.use(function(err, req, res, next) {
 });
 
 const restCommand = async (method, params = {}, auth = [], authRefresh = true) => {
+  
+  console.log('restCommand with: ', { method, params, auth, authRefresh });
   const queryUrl = `${auth["client_endpoint"]}${method}`;
   const queryData = querystring.stringify({
     ...params,
