@@ -6,6 +6,7 @@ var logger = require('morgan');
 const b24 = require("b24");
 const fetch = require("node-fetch");
 const querystring = require("querystring");
+var qs = require('qs');
 require("dotenv").config();
 
 var indexRouter = require('./routes/index');
@@ -144,9 +145,8 @@ const restCommand = async (method, params = {}, auth = [], authRefresh = true) =
   
   console.log('restCommand with: ', { method, params, auth, authRefresh });
   const queryUrl = `${auth["client_endpoint"]}${method}`;
-  const queryData = querystring.stringify({
+  const queryData = qs.stringify({
     ...params,
-    'PROPERTIES': JSON.stringify(params['PROPERTIES']),
     auth: auth["access_token"]
   });
 
