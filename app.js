@@ -7,8 +7,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const b24 = require("b24");
 const fetch = require("node-fetch");
-const querystring = require("querystring");
-var qs = require('qs');
+var querystring = require('qs');
 const bodyParser = require('body-parser');
 require("dotenv").config();
 
