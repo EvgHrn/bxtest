@@ -57,28 +57,24 @@ app.get("/auth", (req, res) => {
 });
 
 // Callback service parsing the authorization token and asking for the access token
-app.get("/", async (req, res) => {
-  if (req.query.code) {
-    try {
-      console.log("callback with: ", req.query);
-      const query = querystring.stringify({
-        grant_type: "authorization_code",
-        client_id: process.env.BITRIX_CLIENT_ID,
-        client_secret: process.env.BITRIX_CLIENT_SECRET,
-        code: req.query.code
-      });
-      const response = await fetch(
-        `https://oauth.bitrix.info/oauth/token/?${query}`,
-      );
-      const data = await response.json();
-      console.log('Token response: ', data);
-      return res.json();
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json({ message: "Authentication Failed" });
-    }
-  } else {
+app.get("/callback", async (req, res) => {
+  try {
+    console.log("callback with: ", req.query);
+    const query = querystring.stringify({
+      grant_type: "authorization_code",
+      client_id: process.env.BITRIX_CLIENT_ID,
+      client_secret: process.env.BITRIX_CLIENT_SECRET,
+      code: req.query.code
+    });
+    const response = await fetch(
+      `https://oauth.bitrix.info/oauth/token/?${query}`,
+    );
+    const data = await response.json();
+    console.log('Token response: ', data);
     return res.json();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Authentication Failed" });
   }
 });
 

@@ -7,19 +7,32 @@
 var app = require('../app');
 var debug = require('debug')('bxtest:server');
 var http = require('http');
+require("dotenv").config();
+const https = require('https');
+const fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '3333');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+ let server;
+
+ if(process.env.MODE !== local) {
+  const options = {
+    key: fs.readFileSync('/etc/ssl/private.key'),
+    cert: fs.readFileSync('/etc/ssl/ordersview.crt')
+  };
+  server = https.createServer(options, app);
+ } else {
+  server = http.createServer(app);
+ }
 
 /**
  * Listen on provided port, on all network interfaces.
