@@ -24,7 +24,7 @@ app.set('port', port);
 
  let server;
 
- if(process.env.MODE !== local) {
+ if(process.env.MODE !== 'local') {
   const options = {
     key: fs.readFileSync('/etc/ssl/private.key'),
     cert: fs.readFileSync('/etc/ssl/ordersview.crt')
