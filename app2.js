@@ -9,6 +9,7 @@ const b24 = require("b24");
 const fetch = require("node-fetch");
 const querystring = require("querystring");
 var qs = require('qs');
+const bodyParser = require('body-parser');
 require("dotenv").config();
 
 var app = express();
@@ -17,9 +18,10 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+app.use(bodyParser);
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,7 +32,7 @@ app.use(function(req, res, next) {
     if(req.body.event) {
         switch (req.body.event) {
             case 'ONIMBOTMESSAGEADD':
-                console.log('ONIMBOTMESSAGEADD event');
+                console.log('ONIMBOTMESSAGEADD event with body: ', req.body);
                 // check the event - authorize this event or not
                 if (!config[req.body['auth']['application_token']])
                     return false;
@@ -559,3 +561,5 @@ const restAuth = async (auth) => {
 
 // 	return true;
 // }
+
+module.exports = app;
