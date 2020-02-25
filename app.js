@@ -56,10 +56,14 @@ app.get("/auth", (req, res) => {
   res.redirect(`${process.env.BITRIX_HOST}/oauth/authorize/?${query}`);
 });
 
+app.get("/callback", async (req, res) => {
+  console.log("get with: ", req.query);
+});
+
 // Callback service parsing the authorization token and asking for the access token
 app.get("/", async (req, res) => {
   try {
-    console.log("callback with: ", req.query);
+    console.log("get with: ", req.query);
     const query = querystring.stringify({
       grant_type: "authorization_code",
       client_id: process.env.BITRIX_CLIENT_ID,
