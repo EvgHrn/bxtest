@@ -80,7 +80,7 @@ app.post("/callback", async (req, res) => {
   if(event === "ONAPPINSTALL") {
     const handlerBackUrl = `${process.env.SERVER_HOST}:${process.env.PORT}/`;
     const response = await restCommand('imbot.register', {
-      'CODE': 'echobot',
+      'CODE': 'Test_bot',
       'TYPE': 'B',
       'EVENT_MESSAGE_ADD': handlerBackUrl,
       'EVENT_WELCOME_MESSAGE': handlerBackUrl,
@@ -88,7 +88,7 @@ app.post("/callback", async (req, res) => {
       'PROPERTIES': {
         'NAME': 'Test_bot',
         'COLOR': 'GREEN',
-        'EMAIL': 'it.s-ujy@mail.ru',
+        'EMAIL': 'itsujy@mail.ru',
         'PERSONAL_BIRTHDAY': '2016-03-11',
         'WORK_POSITION': 'Test factory bot',
         'PERSONAL_WWW': 'http://bitrix24.com',
@@ -146,6 +146,7 @@ const restCommand = async (method, params = {}, auth = [], authRefresh = true) =
   const queryUrl = `${auth["client_endpoint"]}${method}`;
   const queryData = querystring.stringify({
     ...params,
+    'PROPERTIES': JSON.stringify(params['PROPERTIES']),
     auth: auth["access_token"]
   });
 
