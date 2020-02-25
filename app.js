@@ -26,7 +26,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-let config = {};
+let config;
+
+try {
+  config = db
+    .get("params")
+    .cloneDeep()
+    .value();
+} catch (err) {
+  config = {};
+}
+
+console.log("Init config: ", config);
 
 app.use(async (req, res, next) => {
 
