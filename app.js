@@ -56,7 +56,7 @@ app.get("/auth", (req, res) => {
   res.redirect(`${process.env.BITRIX_HOST}/oauth/authorize/?${query}`);
 });
 
-app.get("/callback", async (req, res) => {
+app.post("/callback", async (req, res) => {
   console.log("get with: ", req.query);
 });
 
