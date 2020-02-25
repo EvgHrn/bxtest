@@ -9,6 +9,8 @@ const b24 = require("b24");
 const fetch = require("node-fetch");
 var querystring = require('qs');
 const bodyParser = require('body-parser');
+const db = require("./utils/db");
+
 require("dotenv").config();
 
 var app = express();
@@ -97,6 +99,8 @@ app.use(async (req, res, next) => {
             BOT_ID: botId,
             AUTH: req.body["auth"]
           };
+
+          saveParams(config);
 
           console.log("New config: ", config);
 
@@ -477,16 +481,13 @@ app.use(async (req, res, next) => {
  * @param $params
  * @return bool
  */
-// function saveParams($params)
-// {
-// 	$config = "<?php\n";
-// 	$config .= "\$appsConfig = ".var_export($params, true).";\n";
-// 	$config .= "?>";
-
-// 	file_put_contents(__DIR__."/config.php", $config);
-
-// 	return true;
-// }
+const saveParams = (params) => {
+  db.set("params", {}).write();
+  db.get("params")
+    .push(params)
+    .write();
+	return true;
+}
 
 /**
  * Send rest query to Bitrix24.
