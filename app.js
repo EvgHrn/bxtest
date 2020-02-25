@@ -57,7 +57,33 @@ app.get("/auth", (req, res) => {
 });
 
 app.post("/callback", async (req, res) => {
-  console.log("get with: ", req.query);
+
+  console.log("callback event: ", req.body.event);
+  const event  = req.body.event;
+
+  if(event === "ONAPPINSTALL") {
+    const handlerBackUrl = `${process.env.SERVER_HOST}:${process.env.PORT}/`;
+    const response = await restCommand('imbot.register', {
+      'CODE': 'echobot',
+      'TYPE': 'B',
+      'EVENT_MESSAGE_ADD': handlerBackUrl,
+      'EVENT_WELCOME_MESSAGE': handlerBackUrl,
+      'EVENT_BOT_DELETE': handlerBackUrl,
+      'PROPERTIES': {
+        'NAME': 'Test_bot',
+        'COLOR': 'GREEN',
+        'EMAIL': 'it.s-ujy@mail.ru',
+        'PERSONAL_BIRTHDAY': '2016-03-11',
+        'WORK_POSITION': 'Test factory bot',
+        'PERSONAL_WWW': 'http://bitrix24.com',
+        'PERSONAL_GENDER': 'M'
+      }
+      }, req.body.auth
+    );
+    result = await response.json();
+    console.log('ONAPPINSTALL response: ', result);
+  }
+
 });
 
 // Callback service parsing the authorization token and asking for the access token
@@ -82,20 +108,6 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/allUser", async (req, res) => {
-  try {
-    const result = await bitrix24.callMethod("user.get");
-    console.log("allUser result: ", result);
-    return res.json(result);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-// app.use('/', indexRouter);
-// app.use('/users', usersRouter);
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -111,5 +123,35 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+const restCommand = async (method, params = {}, auth = [], authRefresh = true) => {
+  const queryUrl = auth["client_endpoint"].method;
+  const queryData = querystring.stringify({
+    ...params,
+    auth: auth["access_token"]
+  });
+
+  let result;
+
+	try {
+    const response = await fetch(
+      `${queryUrl}${queryData}`,
+    );
+    result = await response.json();
+    console.log('restCommand response: ', result);
+  } catch(err) {
+    console.log('restCommand fetch error: ', err);
+  }
+
+	// if (authRefresh && isset($result['error']) && in_array($result['error'], array('expired_token', 'invalid_token')))
+	// {
+	// 	$auth = restAuth($auth);
+	// 	if ($auth)
+	// 	{
+	// 		$result = restCommand($method, $params, $auth, false);
+	// 	}
+	// }
+	// return $result;
+}
 
 module.exports = app;
