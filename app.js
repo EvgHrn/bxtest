@@ -57,7 +57,7 @@ app.use(async (req, res, next) => {
           {
             // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
             DIALOG_ID: 1819,
-            MESSAGE: `Message from`,
+            MESSAGE: `Сообщение от ${req.body["data"]["USER"]["NAME"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
           },
           req.body["auth"],
         );
@@ -98,24 +98,28 @@ app.use(async (req, res, next) => {
         console.log("ONAPPINSTALL event with body: ", req.body);
         handlerBackUrl = process.env.SERVER_HOST;
         // register new bot
-        result = await restCommand('imbot.register', {
-          'CODE': 'Test Factory Support',
-          'TYPE': 'B',
-          'EVENT_MESSAGE_ADD': handlerBackUrl,
-          'EVENT_WELCOME_MESSAGE': handlerBackUrl,
-          'EVENT_BOT_DELETE': handlerBackUrl,
-          // 'OPENLINE': 'Y', // this flag only for Open Channel mode http://bitrix24.ru/~bot-itr
-          'PROPERTIES': {
-            'NAME': 'Test factory support',
-            'COLOR': 'GREEN',
-            'EMAIL': 'test@test.ru',
-            'PERSONAL_BIRTHDAY': '2016-03-11',
-            'WORK_POSITION': 'Test factory support bot',
-            'PERSONAL_WWW': 'http://bitrix24.com',
-            'PERSONAL_GENDER': 'M',
-            // 'PERSONAL_PHOTO': base64_encode(file_get_contents(__DIR__.'/avatar.png')),
-          }
-        }, req.body["auth"]);
+        result = await restCommand(
+          "imbot.register",
+          {
+            CODE: "Test Factory Support",
+            TYPE: "H",
+            EVENT_MESSAGE_ADD: handlerBackUrl,
+            EVENT_WELCOME_MESSAGE: handlerBackUrl,
+            EVENT_BOT_DELETE: handlerBackUrl,
+            // 'OPENLINE': 'Y', // this flag only for Open Channel mode http://bitrix24.ru/~bot-itr
+            PROPERTIES: {
+              NAME: "Test factory support",
+              COLOR: "GREEN",
+              EMAIL: "test@test.ru",
+              PERSONAL_BIRTHDAY: "2016-03-11",
+              WORK_POSITION: "Test factory support bot",
+              PERSONAL_WWW: "http://bitrix24.com",
+              PERSONAL_GENDER: "M",
+              // 'PERSONAL_PHOTO': base64_encode(file_get_contents(__DIR__.'/avatar.png')),
+            },
+          },
+          req.body["auth"],
+        );
 
         const botId = result['result'];
 
@@ -624,3 +628,55 @@ const restAuth = async (auth) => {
 // }
 
 module.exports = app;
+
+
+//  body:  {
+//   event: 'ONIMBOTMESSAGEADD',
+//   data: {
+//     BOT: { '1823': [Object] },
+//     PARAMS: {
+//       FROM_USER_ID: '1514',
+//       TO_USER_ID: '1823',
+//       MESSAGE: 'd',
+//       MESSAGE_TYPE: 'P',
+//       SKIP_COMMAND: 'N',
+//       SKIP_CONNECTOR: 'N',
+//       IMPORTANT_CONNECTOR: 'N',
+//       SILENT_CONNECTOR: 'N',
+//       AUTHOR_ID: '1514',
+//       CHAT_ID: '3295',
+//       COMMAND_CONTEXT: 'TEXTAREA',
+//       DIALOG_ID: '1514',
+//       MESSAGE_ID: '120044',
+//       CHAT_TYPE: 'P',
+//       LANGUAGE: 'ru'
+//     },
+//     USER: {
+//       ID: '1514',
+//       NAME: 'Евгений Хайдаршин',
+//       FIRST_NAME: 'Евгений',
+//       LAST_NAME: 'Хайдаршин',
+//       WORK_POSITION: '',
+//       GENDER: 'M',
+//       IS_BOT: 'N',
+//       IS_CONNECTOR: 'N',
+//       IS_NETWORK: 'N',
+//       IS_EXTRANET: 'N'
+//     }
+//   },
+//   ts: '1582651907',
+//   auth: {
+//     access_token: '1368555e0044d864003dc5b4000005ea0000039e16fdb8f7ae622e680bcc4651361662',
+//     expires: '1582655507',
+//     expires_in: '3600',
+//     scope: 'imopenlines,crm,im,imbot,task,tasks_extended,placement,user,entity,pull,pull_channel,mobile,log,messageservice,lists,disk,department',
+//     domain: 'bitrix24.inari.pro',
+//     server_endpoint: 'https://oauth.bitrix.info/rest/',
+//     status: 'L',
+//     client_endpoint: 'https://bitrix24.inari.pro/rest/',
+//     member_id: '7126572dc5d37d6e261e584c932fdfed',
+//     user_id: '1514',
+//     refresh_token: '03e77c5e0044d864003dc5b4000005ea00000380fa1baaafefa56d45625b7f97e79973',
+//     application_token: 'c6e4c9018ccef1af374cc701f90fe688'
+//   }
+// }
