@@ -58,8 +58,23 @@ app.get("/auth", (req, res) => {
 
 app.post("/callback", async (req, res) => {
 
+  const authObj = {
+    access_token: req.body["auth[access_token]"],
+    expires: req.body["auth[expires]"],
+    expires_in: req.body["auth[expires_in]"],
+    scope: req.body["auth[scope]"],
+    domain: req.body["auth[domain]"],
+    server_endpoint: req.body["auth[server_endpoint]"],
+    status: req.body["auth[status]"],
+    client_endpoint: req.body["auth[client_endpoint]"],
+    member_id: req.body["auth[member_id]"],
+    user_id: req.body["auth[user_id]"],
+    refresh_token: req.body["auth[refresh_token]"],
+    application_token: req.body["auth[application_token]"]
+  }
+
   console.log("callback event: ", req.body.event);
-  console.log("callback auth: ", req.body.auth);
+  console.log("callback auth: ", authObj);
   const event  = req.body.event;
 
   if(event === "ONAPPINSTALL") {
@@ -79,7 +94,7 @@ app.post("/callback", async (req, res) => {
         'PERSONAL_WWW': 'http://bitrix24.com',
         'PERSONAL_GENDER': 'M'
       }
-      }, req.body.auth
+      }, authObj
     );
     result = await response.json();
     console.log('ONAPPINSTALL response: ', result);
@@ -159,3 +174,17 @@ const restCommand = async (method, params = {}, auth = [], authRefresh = true) =
 }
 
 module.exports = app;
+
+
+// 'auth[access_token]': '93d2545e0044d864003dc5b4000005ea0000038f3ebe56764fd089c5b0ddd8d46ffaea',
+// 'auth[expires]': '1582617235',
+// 'auth[expires_in]': '3600',
+// 'auth[scope]': 'imopenlines,crm,im,imbot,task,tasks_extended,placement,user,entity,pull,pull_channel,mobile,log,messageservice,lists,disk,department',
+// 'auth[domain]': 'bitrix24.inari.pro',
+// 'auth[server_endpoint]': 'https://oauth.bitrix.info/rest/',
+// 'auth[status]': 'L',
+// 'auth[client_endpoint]': 'https://bitrix24.inari.pro/rest/',
+// 'auth[member_id]': '7126572dc5d37d6e261e584c932fdfed',
+// 'auth[user_id]': '1514',
+// 'auth[refresh_token]': '83517c5e0044d864003dc5b4000005ea00000349fb4c3769c4fbbe40fd1ec32a8d0136',
+// 'auth[application_token]': 'c6e4c9018ccef1af374cc701f90fe688'
