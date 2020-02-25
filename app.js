@@ -42,98 +42,99 @@ try {
 
 app.use(async (req, res, next) => {
 
-    if(req.body.event) {
-      switch (req.body.event) {
-        case "ONIMBOTMESSAGEADD":
-          console.log("ONIMBOTMESSAGEADD event with body: ", req.body);
-          // check the event - authorize this event or not
-          if (!config[req.body["auth"]["application_token"]]) return false;
+  if (req.body.event) {
+    let result;
+    switch (req.body.event) {
+      case "ONIMBOTMESSAGEADD":
+        console.log("ONIMBOTMESSAGEADD event with body: ", req.body);
+        // check the event - authorize this event or not
+        if (!config[req.body["auth"]["application_token"]]) return false;
 
-          const result = restCommand(
-            "imbot.message.add",
-            {
-              // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
-              DIALOG_ID: 1819,
-              MESSAGE: `Message from`,
-            },
-            req.body["auth"],
-          );
+        result = await restCommand(
+          "imbot.message.add",
+          {
+            // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
+            DIALOG_ID: 1819,
+            MESSAGE: `Message from`,
+          },
+          req.body["auth"],
+        );
 
-          // response time
-          // $latency = (time()-$_REQUEST['ts']);
-          // $latency = $latency > 60? (round($latency/60)).'m': $latency."s";
+        // response time
+        // $latency = (time()-$_REQUEST['ts']);
+        // $latency = $latency > 60? (round($latency/60)).'m': $latency."s";
 
-          // if (req.body['data']['PARAMS']['CHAT_ENTITY_TYPE'] === 'LINES') {
-          //     const message = req.body['data']['PARAMS']['MESSAGE'];
-          //     if (message === '1') {
-          //         $result = restCommand('imbot.message.add', Array(
-          //             "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
-          //             "MESSAGE" => 'Im EchoBot, i can repeat message after you and send menu in Open Channels![br]Look new chat-bot created specifically for Open Channels - [b]ITR Bot[/b] http://birix24.ru/~bot-itr',
-          //         ), $_REQUEST["auth"]);
-          //     }  else if ($message == '0') {
-          //         $result = restCommand('imbot.message.add', Array(
-          //             "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
-          //             "MESSAGE" => 'Wait for an answer!',
-          //         ), $_REQUEST["auth"]);
-          //     }
-          // } else {
-          //     // send answer message
-          //     $result = restCommand('imbot.message.add', Array(
-          //         "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
-          //         "MESSAGE" => "Message from bot",
-          //         "ATTACH" => Array(
-          //             Array("MESSAGE" => "reply: ".$_REQUEST['data']['PARAMS']['MESSAGE']),
-          //             Array("MESSAGE" => "latency: ".$latency)
-          //         )
-          //     ), $_REQUEST["auth"]);
-          // }
+        // if (req.body['data']['PARAMS']['CHAT_ENTITY_TYPE'] === 'LINES') {
+        //     const message = req.body['data']['PARAMS']['MESSAGE'];
+        //     if (message === '1') {
+        //         $result = restCommand('imbot.message.add', Array(
+        //             "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
+        //             "MESSAGE" => 'Im EchoBot, i can repeat message after you and send menu in Open Channels![br]Look new chat-bot created specifically for Open Channels - [b]ITR Bot[/b] http://birix24.ru/~bot-itr',
+        //         ), $_REQUEST["auth"]);
+        //     }  else if ($message == '0') {
+        //         $result = restCommand('imbot.message.add', Array(
+        //             "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
+        //             "MESSAGE" => 'Wait for an answer!',
+        //         ), $_REQUEST["auth"]);
+        //     }
+        // } else {
+        //     // send answer message
+        //     $result = restCommand('imbot.message.add', Array(
+        //         "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
+        //         "MESSAGE" => "Message from bot",
+        //         "ATTACH" => Array(
+        //             Array("MESSAGE" => "reply: ".$_REQUEST['data']['PARAMS']['MESSAGE']),
+        //             Array("MESSAGE" => "latency: ".$latency)
+        //         )
+        //     ), $_REQUEST["auth"]);
+        // }
 
-          // write debug log
-          // writeToLog($result, 'ImBot Event message add');
+        // write debug log
+        // writeToLog($result, 'ImBot Event message add');
+        break;
+      case "ONAPPINSTALL":
+        console.log("ONAPPINSTALL event with body: ", req.body);
+        handlerBackUrl = process.env.SERVER_HOST;
+        // register new bot
+        result = await restCommand('imbot.register', {
+          'CODE': 'Test Factory Support',
+          'TYPE': 'B',
+          'EVENT_MESSAGE_ADD': handlerBackUrl,
+          'EVENT_WELCOME_MESSAGE': handlerBackUrl,
+          'EVENT_BOT_DELETE': handlerBackUrl,
+          // 'OPENLINE': 'Y', // this flag only for Open Channel mode http://bitrix24.ru/~bot-itr
+          'PROPERTIES': {
+            'NAME': 'Test factory support',
+            'COLOR': 'GREEN',
+            'EMAIL': 'test@test.ru',
+            'PERSONAL_BIRTHDAY': '2016-03-11',
+            'WORK_POSITION': 'Test factory support bot',
+            'PERSONAL_WWW': 'http://bitrix24.com',
+            'PERSONAL_GENDER': 'M',
+            // 'PERSONAL_PHOTO': base64_encode(file_get_contents(__DIR__.'/avatar.png')),
+          }
+        }, req.body["auth"]);
+
+        const botId = result['result'];
+
+        // save params
+        config[req.body["auth"]["application_token"]] = {
+          BOT_ID: botId,
+          AUTH: req.body["auth"]
+        };
+
+        saveParams(config);
+
+        console.log("New app config: ", config);
+
+        // write debug log
+        // writeToLog(Array($botId, $commandEcho, $commandHelp, $commandList), 'ImBot register');
+        break;
+        // case valueN:
+        //   break;
+        default:
           break;
-        case "ONAPPINSTALL":
-          console.log("ONAPPINSTALL event with body: ", req.body);
-          handlerBackUrl = process.env.SERVER_HOST;
-          // register new bot
-          let result = await restCommand('imbot.register', {
-            'CODE': 'Test Factory Support',
-            'TYPE': 'B',
-            'EVENT_MESSAGE_ADD': handlerBackUrl,
-            'EVENT_WELCOME_MESSAGE': handlerBackUrl,
-            'EVENT_BOT_DELETE': handlerBackUrl,
-            // 'OPENLINE': 'Y', // this flag only for Open Channel mode http://bitrix24.ru/~bot-itr
-            'PROPERTIES': {
-              'NAME': 'Test factory support',
-              'COLOR': 'GREEN',
-              'EMAIL': 'test@test.ru',
-              'PERSONAL_BIRTHDAY': '2016-03-11',
-              'WORK_POSITION': 'Test factory support bot',
-              'PERSONAL_WWW': 'http://bitrix24.com',
-              'PERSONAL_GENDER': 'M',
-              // 'PERSONAL_PHOTO': base64_encode(file_get_contents(__DIR__.'/avatar.png')),
-            }
-          }, req.body["auth"]);
-
-          const botId = result['result'];
-
-          // save params
-          config[req.body["auth"]["application_token"]] = {
-            BOT_ID: botId,
-            AUTH: req.body["auth"]
-          };
-
-          saveParams(config);
-
-          console.log("New app config: ", config);
-
-          // write debug log
-          // writeToLog(Array($botId, $commandEcho, $commandHelp, $commandList), 'ImBot register');
-          break;
-          // case valueN:
-          //   break;
-          default:
-            break;
-        }
+      }
     }
     // next(createError(404));
 });
@@ -521,25 +522,25 @@ const saveParams = (params) => {
 const restCommand = async (method, params ={}, auth = {}, authRefresh = true) => {
     const queryUrl = `${auth["client_endpoint"]}${method}`;
     const queryData = querystring.stringify({
-        ...params,
-        auth: auth["access_token"]
+      ...params,
+      auth: auth["access_token"]
     });
 	// writeToLog(Array('URL' => $queryUrl, 'PARAMS' => array_merge($params, array("auth" => $auth["access_token"]))), 'ImBot send data');
 
     let result;
     try{
-        const response = await fetch(`${queryUrl}/?${queryData}`);
-        result = await response.json();
-        console.log('restCommand response: ', result);
+      const response = await fetch(`${queryUrl}/?${queryData}`);
+      result = await response.json();
+      console.log('restCommand response: ', result);
     } catch(err) {
-        console.log('restCommand fetch error: ', err);
+      console.log('restCommand fetch error: ', err);
     }
 
 	if (authRefresh && result['error'] && (result['error']['expired_token'] || result['error']['invalid_token'] )) {
 		auth = await restAuth(auth);
 		if (auth) {
-            result = await restCommand(method, params, auth, false);
-            console.log('restCommand response w/o auth: ', result);
+      result = await restCommand(method, params, auth, false);
+      console.log('restCommand response w/o auth: ', result);
 		}
 	}
 
