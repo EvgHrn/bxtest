@@ -125,7 +125,7 @@ app.use(function(err, req, res, next) {
 });
 
 const restCommand = async (method, params = {}, auth = [], authRefresh = true) => {
-  const queryUrl = auth["client_endpoint"].method;
+  const queryUrl = `${auth["client_endpoint"]}${method}`;
   const queryData = querystring.stringify({
     ...params,
     auth: auth["access_token"]
