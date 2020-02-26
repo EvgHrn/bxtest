@@ -30,20 +30,19 @@ let config;
 
 try {
     db.read();
-    config = JSON.stringify(db.getState()).configs;
-//   config = db.get('configs').value();
+    config = db.getState().configs;
   console.log("Got params from db: ", config);
   if (config === undefined) {
-    db.defaults({ configs: {} })
+    db.set('configs', [])
         .write()
-    config = {};
+    config = [];
   } 
 } catch (err) {
   console.log("Getting params from db error: ", err);
   console.log("Reset config");
-  db.defaults({ configs: {} })
+  db.set('configs', [])
     .write()
-  config = {};
+  config = [];
 }
 
 app.use(async (req, res, next) => {
@@ -521,7 +520,7 @@ const saveParams = (params) => {
     db.get('configs')
         .push(params)
         .write()
-    console.log("Saved configs: ", db.get('configs').value());
+    console.log("Saved configs: ", db.getState().configs);
     return true;
 }
 
