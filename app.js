@@ -178,10 +178,29 @@ app.use(async (req, res, next) => {
 
         const botId = result['result'];
 
+        result = await restCommand('imbot.command.register', {
+            'BOT_ID': botId,
+            'COMMAND': 'masssend',
+            'COMMON': 'Y',
+            'HIDDEN': 'N',
+            'EXTRANET_SUPPORT': 'N',
+            'LANG': [
+                {
+                    'LANGUAGE_ID': 'ru',
+                    'TITLE': 'Рассылка подразделению',
+                    'PARAMS': 'Подразделение-Сообщение'
+                },
+            ],
+            'EVENT_COMMAND_ADD': handlerBackUrl,
+        }, req.body["auth"]);
+
+        const commandMassSend = result['result'];
+
         // save params
         config[req.body["auth"]["application_token"]] = {
-          BOT_ID: botId,
-          AUTH: req.body["auth"]
+          "BOT_ID": botId,
+          "COMMAND_MASSSEND": commandMassSend,
+          "AUTH": req.body["auth"]
         };
 
         saveParams(config);
