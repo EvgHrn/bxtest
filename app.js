@@ -200,7 +200,7 @@ app.use(async (req, res, next) => {
                         "MESSAGE_ID": command['MESSAGE_ID'],
                         "MESSAGE": `Ответ на команду /${command['COMMAND']} ${command['COMMAND_PARAMS']}`,
                         "ATTACH": [
-                            { "MESSAGE": `Разослано пользователям: ${users.map(user => `${user},\n`)}` }
+                            { "MESSAGE": `Разослано пользователям:\n ${users.map(user => `${user}\n`)}` }
                         ]
                         }, req.body["auth"]
                     );
