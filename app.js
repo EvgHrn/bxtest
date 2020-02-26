@@ -189,13 +189,13 @@ app.use(async (req, res, next) => {
 
             result = false;
 
-            req.body['data']['COMMAND'].forEach((command) => {
+            req.body['data']['COMMAND'].forEach(async (command) => {
                 if (command['COMMAND'] === 'masssend') {
                     const stringToSearch = req.body['data']['COMMAND'][0]['COMMAND_PARAMS'].match(/^.*(?=-)/gm)[0];
                     console.log('Department to search: ', stringToSearch);
                     const users = await searchUsers(stringToSearch, req.body["auth"]);
                     console.log('Users to mass send: ', users);
-                    result = restCommand('imbot.command.answer', {
+                    result = await restCommand('imbot.command.answer', {
                         "COMMAND_ID": command['COMMAND_ID'],
                         "MESSAGE_ID": command['MESSAGE_ID'],
                         "MESSAGE": "Ответ на команду",
@@ -205,7 +205,7 @@ app.use(async (req, res, next) => {
                         }, req.body["auth"]
                     );
                 } else {
-                    result = restCommand('imbot.command.answer', {
+                    result = await restCommand('imbot.command.answer', {
                         "COMMAND_ID": command['COMMAND_ID'],
                         "MESSAGE_ID": command['MESSAGE_ID'],
                         "MESSAGE": "Неизвестная команда",
