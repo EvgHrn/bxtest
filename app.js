@@ -191,7 +191,7 @@ app.use(async (req, res, next) => {
 
             req.body['data']['COMMAND'].forEach((command) => {
                 if (command['COMMAND'] === 'masssend') {
-                    const stringToSearch = req.body['data']['COMMAND_PARAMS'].match(/^.*(?=-)/gm)[0];
+                    const stringToSearch = req.body['data']['COMMAND'][0]['COMMAND_PARAMS'].match(/^.*(?=-)/gm)[0];
                     console.log('Department to search: ', stringToSearch);
                     const users = searchUsers(stringToSearch, req.body["auth"]);
                     console.log('Users to mass send: ', users);
