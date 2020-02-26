@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const supportGroup = [1819];
+const supportGroup = ["1819"];
 
 let config;
 
@@ -76,6 +76,7 @@ app.use(async (req, res, next) => {
             console.log('Message from support group');
             const msg = req.body["data"]["PARAMS"]["MESSAGE"];
             const toUserId = msg.match(/(?<=id)\d*/gm);
+            console.log('Find id: ', toUserId);
             result = await restCommand(
                 "imbot.message.add",
                 {
