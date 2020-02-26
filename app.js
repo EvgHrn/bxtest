@@ -598,7 +598,7 @@ const saveParams = (params) => {
     db.get('configs')
         .push(params)
         .write()
-    console.log("Saved configs: ", db.getState().configs);
+    // console.log("Saved configs: ", db.getState().configs);
     return true;
 }
 
