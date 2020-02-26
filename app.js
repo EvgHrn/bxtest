@@ -72,7 +72,7 @@ app.use(async (req, res, next) => {
                     req.body["auth"],
                 );
             }
-        } else {
+        } else if(msg.match(/(?<=id)\d*/gm)) {
             console.log('Message from support group');
             const msg = req.body["data"]["PARAMS"]["MESSAGE"];
             const toUserId = msg.match(/(?<=id)\d*/gm);
@@ -83,6 +83,17 @@ app.use(async (req, res, next) => {
                   // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
                   DIALOG_ID: toUserId[0],
                   MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
+                },
+                req.body["auth"],
+            );
+        } else {
+            console.log('Quotation error in: ', req.body["data"]["PARAMS"]["MESSAGE"]);
+            result = await restCommand(
+                "imbot.message.add",
+                {
+                  // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
+                  DIALOG_ID: req.body["data"]["PARAMS"]["FROM_USER_ID"],
+                  MESSAGE: `Ошибка цитаты`,
                 },
                 req.body["auth"],
             );
