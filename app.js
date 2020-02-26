@@ -26,6 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const supportGroup = [1819];
+
 let config;
 
 try {
@@ -47,7 +49,7 @@ try {
 
 app.use(async (req, res, next) => {
 
-  console.log("New request: ", req.body);
+  
 
   if (req.body.event) {
     let result;
@@ -57,15 +59,35 @@ app.use(async (req, res, next) => {
         // check the event - authorize this event or not
         if (!config[req.body["auth"]["application_token"]]) return false;
 
-        result = await restCommand(
-          "imbot.message.add",
-          {
-            // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
-            DIALOG_ID: 1819,
-            MESSAGE: `Сообщение от ${req.body["data"]["USER"]["NAME"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
-          },
-          req.body["auth"],
-        );
+        if(!supportGroup.includes( req.body["data"]["PARAMS"]["FROM_USER_ID"] )) {
+            console.log('Message from common user');
+            for(let i = 0; i < supportGroup.length; i++) {
+                result = await restCommand(
+                    "imbot.message.add",
+                    {
+                      // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
+                      DIALOG_ID: supportGroup[i],
+                      MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
+                    },
+                    req.body["auth"],
+                );
+            }
+        } else {
+            console.log('Message from support group');
+            const msg = req.body["data"]["PARAMS"]["MESSAGE"];
+            const toUserId = msg.match(/(?<=id)\d*/gm);
+            result = await restCommand(
+                "imbot.message.add",
+                {
+                  // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
+                  DIALOG_ID: toUserId,
+                  MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
+                },
+                req.body["auth"],
+            );
+        }
+
+        
 
         // response time
         // $latency = (time()-$_REQUEST['ts']);
@@ -144,7 +166,8 @@ app.use(async (req, res, next) => {
         // case valueN:
         //   break;
         default:
-          break;
+            console.log("New unidentified request: ", req.body);
+            break;
       }
     }
     // next(createError(404));
@@ -688,3 +711,9 @@ module.exports = app;
 //     application_token: 'c6e4c9018ccef1af374cc701f90fe688'
 //   }
 // }
+
+// MESSAGE: '------------------------------------------------------\n' +
+//         'Test factory support [вчера, 21:42]\n' +
+//         'Сообщение от Евгений Хайдаршин: dfdfggd\n' +
+//         '------------------------------------------------------\n' +
+//         'С цитатой',
