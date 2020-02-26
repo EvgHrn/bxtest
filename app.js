@@ -29,15 +29,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 let config;
 
 try {
-  config = db
-    .get("config")
-    .cloneDeep();
+  config = db.object;
   console.log("Got params from db: ", config);
   if (config === undefined) config = {};
 } catch (err) {
   console.log("Getting params from db error: ", err);
   console.log("Reset config");
-  config = { "params": {} };
+  config = {};
 }
 
 app.use(async (req, res, next) => {
@@ -511,9 +509,12 @@ app.use(async (req, res, next) => {
  * @return bool
  */
 const saveParams = (params) => {
-  db.set("config", params).write();
-  console.log("Saved config: ", db.get("config").cloneDeep());
-	return true;
+    console.log("Gonna save new config: ", params);
+    db.get('posts')
+        .push(params)
+        .write()
+    console.log("Saved configs: ", db.object);
+    return true;
 }
 
 /**
