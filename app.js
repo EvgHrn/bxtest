@@ -81,7 +81,7 @@ app.use(async (req, res, next) => {
                 "imbot.message.add",
                 {
                   // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
-                  DIALOG_ID: toUserId,
+                  DIALOG_ID: toUserId[0],
                   MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
                 },
                 req.body["auth"],
