@@ -170,7 +170,7 @@ app.use(async (req, res, next) => {
               WORK_POSITION: "Вопросы производству",
               PERSONAL_WWW: "http://bitrix24.com",
               PERSONAL_GENDER: "M",
-              PERSONAL_PHOTO: base64_encode('./public/avatar.png'),
+            //   PERSONAL_PHOTO: base64_encode('./public/avatar.png'),
             },
           },
           req.body["auth"],
