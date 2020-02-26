@@ -198,9 +198,9 @@ app.use(async (req, res, next) => {
                     result = await restCommand('imbot.command.answer', {
                         "COMMAND_ID": command['COMMAND_ID'],
                         "MESSAGE_ID": command['MESSAGE_ID'],
-                        "MESSAGE": "Ответ на команду",
+                        "MESSAGE": `Ответ на команду /${command['COMMAND']} ${command['COMMAND_PARAMS']}`,
                         "ATTACH": [
-                            { "MESSAGE": `ответ на: /${command['COMMAND']} ${command['COMMAND_PARAMS']}` }
+                            { "MESSAGE": `Разослано пользователям: ${users.map(user => `${user},\n`)}` }
                         ]
                         }, req.body["auth"]
                     );
