@@ -210,8 +210,156 @@ app.use(async (req, res, next) => {
         // write debug log
         // writeToLog(Array($botId, $commandEcho, $commandHelp, $commandList), 'ImBot register');
         break;
-        // case valueN:
-        //   break;
+        case 'ONIMCOMMANDADD':
+            // check the event - authorize this event or not
+            if (!config[req.body['auth']['application_token']])
+                return false;
+
+            console.log('Event ONIMCOMMANDADD with body: ', req.body);
+            
+            result = false;
+            // foreach ($_REQUEST['data']['COMMAND'] as $command)
+            // {
+            //     if ($command['COMMAND'] == 'echo')
+            //     {
+            //         $result = restCommand('imbot.command.answer', Array(
+            //             "COMMAND_ID" => $command['COMMAND_ID'],
+            //             "MESSAGE_ID" => $command['MESSAGE_ID'],
+            //             "MESSAGE" => "Answer command",
+            //             "ATTACH" => Array(
+            //                 Array("MESSAGE" => "reply: /".$command['COMMAND'].' '.$command['COMMAND_PARAMS']),
+            //                 Array("MESSAGE" => "latency: ".$latency),
+            //             )
+            //         ), $_REQUEST["auth"]);
+            //     }
+            //     else if ($command['COMMAND'] == 'echoList')
+            //     {
+            //         $initList = false;
+            //         if (!$command['COMMAND_PARAMS'])
+            //         {
+            //             $initList = true;
+            //             $command['COMMAND_PARAMS'] = 1;
+            //         }
+
+            //         $attach = Array();
+            //         if ($command['COMMAND_PARAMS'] == 1)
+            //         {
+            //             $attach[] = Array("GRID" => Array(
+            //                 Array("VALUE" => "RED","DISPLAY" => "LINE", "WIDTH" => 100),
+            //                 Array("VALUE" => "#df532d","COLOR" => "#df532d","DISPLAY" => "LINE"),
+            //             ));
+            //             $attach[] = Array("GRID" => Array(
+            //                 Array("VALUE" => "GRAPHITE", "DISPLAY" => "LINE", "WIDTH" => 100),
+            //                 Array("VALUE" => "#3a403e", "COLOR" => "#3a403e", "DISPLAY" => "LINE"),
+            //             ));
+            //         }
+            //         else if ($command['COMMAND_PARAMS'] == 2)
+            //         {
+            //             $attach[] = Array("GRID" => Array(
+            //                 Array("VALUE" => "MINT","DISPLAY" => "LINE", "WIDTH" => 100),
+            //                 Array("VALUE" => "#4ba984","COLOR" => "#4ba984","DISPLAY" => "LINE"),
+            //             ));
+            //             $attach[] = Array("GRID" => Array(
+            //                 Array("VALUE" => "LIGHT BLUE", "DISPLAY" => "LINE", "WIDTH" => 100),
+            //                 Array("VALUE" => "#6fc8e5", "COLOR" => "#6fc8e5", "DISPLAY" => "LINE"),
+            //             ));
+            //         }
+            //         else if ($command['COMMAND_PARAMS'] == 3)
+            //         {
+            //             $attach[] = Array("GRID" => Array(
+            //                 Array("VALUE" => "PURPLE","DISPLAY" => "LINE", "WIDTH" => 100),
+            //                 Array("VALUE" => "#8474c8","COLOR" => "#8474c8","DISPLAY" => "LINE"),
+            //             ));
+            //             $attach[] = Array("GRID" => Array(
+            //                 Array("VALUE" => "AQUA", "DISPLAY" => "LINE", "WIDTH" => 100),
+            //                 Array("VALUE" => "#1eb4aa", "COLOR" => "#1eb4aa", "DISPLAY" => "LINE"),
+            //             ));
+            //         }
+            //         else if ($command['COMMAND_PARAMS'] == 4)
+            //         {
+            //             $attach[] = Array("GRID" => Array(
+            //                 Array("VALUE" => "PINK","DISPLAY" => "LINE", "WIDTH" => 100),
+            //                 Array("VALUE" => "#e98fa6","COLOR" => "#e98fa6","DISPLAY" => "LINE"),
+            //             ));
+            //             $attach[] = Array("GRID" => Array(
+            //                 Array("VALUE" => "LIME", "DISPLAY" => "LINE", "WIDTH" => 100),
+            //                 Array("VALUE" => "#85cb7b", "COLOR" => "#85cb7b", "DISPLAY" => "LINE"),
+            //             ));
+            //         }
+            //         else if ($command['COMMAND_PARAMS'] == 5)
+            //         {
+            //             $attach[] = Array("GRID" => Array(
+            //                 Array("VALUE" => "AZURE","DISPLAY" => "LINE", "WIDTH" => 100),
+            //                 Array("VALUE" => "#29619b","COLOR" => "#29619b","DISPLAY" => "LINE"),
+            //             ));
+            //             $attach[] = Array("GRID" => Array(
+            //                 Array("VALUE" => "ORANGE", "DISPLAY" => "LINE", "WIDTH" => 100),
+            //                 Array("VALUE" => "#e8a441", "COLOR" => "#e8a441", "DISPLAY" => "LINE"),
+            //             ));
+            //         }
+            //         $keyboard = Array(
+            //             Array("TEXT" => $command['COMMAND_PARAMS'] == 1? "· 1 ·": "1", "COMMAND" => "echoList", "COMMAND_PARAMS" => "1", "DISPLAY" => "LINE", "BLOCK" => "Y"),
+            //             Array("TEXT" => $command['COMMAND_PARAMS'] == 2? "· 2 ·": "2", "COMMAND" => "echoList", "COMMAND_PARAMS" => "2", "DISPLAY" => "LINE", "BLOCK" => "Y"),
+            //             Array("TEXT" => $command['COMMAND_PARAMS'] == 3? "· 3 ·": "3", "COMMAND" => "echoList", "COMMAND_PARAMS" => "3", "DISPLAY" => "LINE", "BLOCK" => "Y"),
+            //             Array("TEXT" => $command['COMMAND_PARAMS'] == 4? "· 4 ·": "4", "COMMAND" => "echoList", "COMMAND_PARAMS" => "4", "DISPLAY" => "LINE", "BLOCK" => "Y"),
+            //             Array("TEXT" => $command['COMMAND_PARAMS'] == 5? "· 5 ·": "5", "COMMAND" => "echoList", "COMMAND_PARAMS" => "5", "DISPLAY" => "LINE", "BLOCK" => "Y"),
+            //         );
+
+            //         if (!$initList && $command['COMMAND_CONTEXT'] == 'KEYBOARD')
+            //         {
+            //             $result = restCommand('imbot.message.update', Array(
+            //                 "BOT_ID" => $command['BOT_ID'],
+            //                 "MESSAGE_ID" => $command['MESSAGE_ID'],
+            //                 "ATTACH" => $attach,
+            //                 "KEYBOARD" => $keyboard
+            //             ), $_REQUEST["auth"]);
+            //         }
+            //         else
+            //         {
+            //             $result = restCommand('imbot.command.answer', Array(
+            //                 "COMMAND_ID" => $command['COMMAND_ID'],
+            //                 "MESSAGE_ID" => $command['MESSAGE_ID'],
+            //                 "MESSAGE" => "List of colors",
+            //                 "ATTACH" => $attach,
+            //                 "KEYBOARD" => $keyboard
+            //             ), $_REQUEST["auth"]);
+            //         }
+            //     }
+            //     else if ($command['COMMAND'] == 'help')
+            //     {
+            //         $keyboard = Array(
+            //             Array(
+            //                 "TEXT" => "Bitrix24",
+            //                 'LINK' => "http://bitrix24.com",
+            //                 "BG_COLOR" => "#29619b",
+            //                 "TEXT_COLOR" => "#fff",
+            //                 "DISPLAY" => "LINE",
+            //             ),
+            //             Array(
+            //                 "TEXT" => "BitBucket",
+            //                 "LINK" => "https://bitbucket.org/Bitrix24com/rest-bot-echotest",
+            //                 "BG_COLOR" => "#2a4c7c",
+            //                 "TEXT_COLOR" => "#fff",
+            //                 "DISPLAY" => "LINE",
+            //             ),
+            //             Array("TYPE" => "NEWLINE"),
+            //             Array("TEXT" => "Echo", "COMMAND" => "echo", "COMMAND_PARAMS" => "test from keyboard", "DISPLAY" => "LINE"),
+            //             Array("TEXT" => "List", "COMMAND" => "echoList", "DISPLAY" => "LINE"),
+            //             Array("TEXT" => "Help", "COMMAND" => "help", "DISPLAY" => "LINE"),
+            //         );
+
+            //         $result = restCommand('imbot.command.answer', Array(
+            //             "COMMAND_ID" => $command['COMMAND_ID'],
+            //             "MESSAGE_ID" => $command['MESSAGE_ID'],
+            //             "MESSAGE" => "Hello! My name is EchoBot :)[br] I designed to answer your questions!",
+            //             "KEYBOARD" => $keyboard
+            //         ), $_REQUEST["auth"]);
+            //     }
+            // }
+
+            // write debug log
+            // writeToLog($result, 'ImBot Event message add');
+            break;
         default:
             console.log("New unidentified request: ", req.body);
             break;
