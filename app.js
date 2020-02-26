@@ -27,7 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const supportGroup = ["1819", "1600", "3", "1480", "1588"];
+// const supportGroup = ["1819", "1600", "3", "1480", "1588"];
+const supportGroup = ["1819"];
 
 let config;
 
