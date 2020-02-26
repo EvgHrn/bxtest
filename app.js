@@ -72,7 +72,7 @@ app.use(async (req, res, next) => {
                     req.body["auth"],
                 );
             }
-        } else if(msg.match(/(?<=id)\d*/gm)) {
+        } else if(req.body["data"]["PARAMS"]["MESSAGE"].match(/(?<=id)\d*/gm)) {
             console.log('Message from support group');
             const msg = req.body["data"]["PARAMS"]["MESSAGE"];
             const toUserId = msg.match(/(?<=id)\d*/gm);
