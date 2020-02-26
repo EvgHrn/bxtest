@@ -115,37 +115,6 @@ app.use(async (req, res, next) => {
             );
         }
 
-        
-
-        // response time
-        // $latency = (time()-$_REQUEST['ts']);
-        // $latency = $latency > 60? (round($latency/60)).'m': $latency."s";
-
-        // if (req.body['data']['PARAMS']['CHAT_ENTITY_TYPE'] === 'LINES') {
-        //     const message = req.body['data']['PARAMS']['MESSAGE'];
-        //     if (message === '1') {
-        //         $result = restCommand('imbot.message.add', Array(
-        //             "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
-        //             "MESSAGE" => 'Im EchoBot, i can repeat message after you and send menu in Open Channels![br]Look new chat-bot created specifically for Open Channels - [b]ITR Bot[/b] http://birix24.ru/~bot-itr',
-        //         ), $_REQUEST["auth"]);
-        //     }  else if ($message == '0') {
-        //         $result = restCommand('imbot.message.add', Array(
-        //             "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
-        //             "MESSAGE" => 'Wait for an answer!',
-        //         ), $_REQUEST["auth"]);
-        //     }
-        // } else {
-        //     // send answer message
-        //     $result = restCommand('imbot.message.add', Array(
-        //         "DIALOG_ID" => $_REQUEST['data']['PARAMS']['DIALOG_ID'],
-        //         "MESSAGE" => "Message from bot",
-        //         "ATTACH" => Array(
-        //             Array("MESSAGE" => "reply: ".$_REQUEST['data']['PARAMS']['MESSAGE']),
-        //             Array("MESSAGE" => "latency: ".$latency)
-        //         )
-        //     ), $_REQUEST["auth"]);
-        // }
-
         // write debug log
         // writeToLog($result, 'ImBot Event message add');
         break;
@@ -216,146 +185,36 @@ app.use(async (req, res, next) => {
                 return false;
 
             console.log('Event ONIMCOMMANDADD with body: ', req.body);
-            
+
             result = false;
-            // foreach ($_REQUEST['data']['COMMAND'] as $command)
-            // {
-            //     if ($command['COMMAND'] == 'echo')
-            //     {
-            //         $result = restCommand('imbot.command.answer', Array(
-            //             "COMMAND_ID" => $command['COMMAND_ID'],
-            //             "MESSAGE_ID" => $command['MESSAGE_ID'],
-            //             "MESSAGE" => "Answer command",
-            //             "ATTACH" => Array(
-            //                 Array("MESSAGE" => "reply: /".$command['COMMAND'].' '.$command['COMMAND_PARAMS']),
-            //                 Array("MESSAGE" => "latency: ".$latency),
-            //             )
-            //         ), $_REQUEST["auth"]);
-            //     }
-            //     else if ($command['COMMAND'] == 'echoList')
-            //     {
-            //         $initList = false;
-            //         if (!$command['COMMAND_PARAMS'])
-            //         {
-            //             $initList = true;
-            //             $command['COMMAND_PARAMS'] = 1;
-            //         }
 
-            //         $attach = Array();
-            //         if ($command['COMMAND_PARAMS'] == 1)
-            //         {
-            //             $attach[] = Array("GRID" => Array(
-            //                 Array("VALUE" => "RED","DISPLAY" => "LINE", "WIDTH" => 100),
-            //                 Array("VALUE" => "#df532d","COLOR" => "#df532d","DISPLAY" => "LINE"),
-            //             ));
-            //             $attach[] = Array("GRID" => Array(
-            //                 Array("VALUE" => "GRAPHITE", "DISPLAY" => "LINE", "WIDTH" => 100),
-            //                 Array("VALUE" => "#3a403e", "COLOR" => "#3a403e", "DISPLAY" => "LINE"),
-            //             ));
-            //         }
-            //         else if ($command['COMMAND_PARAMS'] == 2)
-            //         {
-            //             $attach[] = Array("GRID" => Array(
-            //                 Array("VALUE" => "MINT","DISPLAY" => "LINE", "WIDTH" => 100),
-            //                 Array("VALUE" => "#4ba984","COLOR" => "#4ba984","DISPLAY" => "LINE"),
-            //             ));
-            //             $attach[] = Array("GRID" => Array(
-            //                 Array("VALUE" => "LIGHT BLUE", "DISPLAY" => "LINE", "WIDTH" => 100),
-            //                 Array("VALUE" => "#6fc8e5", "COLOR" => "#6fc8e5", "DISPLAY" => "LINE"),
-            //             ));
-            //         }
-            //         else if ($command['COMMAND_PARAMS'] == 3)
-            //         {
-            //             $attach[] = Array("GRID" => Array(
-            //                 Array("VALUE" => "PURPLE","DISPLAY" => "LINE", "WIDTH" => 100),
-            //                 Array("VALUE" => "#8474c8","COLOR" => "#8474c8","DISPLAY" => "LINE"),
-            //             ));
-            //             $attach[] = Array("GRID" => Array(
-            //                 Array("VALUE" => "AQUA", "DISPLAY" => "LINE", "WIDTH" => 100),
-            //                 Array("VALUE" => "#1eb4aa", "COLOR" => "#1eb4aa", "DISPLAY" => "LINE"),
-            //             ));
-            //         }
-            //         else if ($command['COMMAND_PARAMS'] == 4)
-            //         {
-            //             $attach[] = Array("GRID" => Array(
-            //                 Array("VALUE" => "PINK","DISPLAY" => "LINE", "WIDTH" => 100),
-            //                 Array("VALUE" => "#e98fa6","COLOR" => "#e98fa6","DISPLAY" => "LINE"),
-            //             ));
-            //             $attach[] = Array("GRID" => Array(
-            //                 Array("VALUE" => "LIME", "DISPLAY" => "LINE", "WIDTH" => 100),
-            //                 Array("VALUE" => "#85cb7b", "COLOR" => "#85cb7b", "DISPLAY" => "LINE"),
-            //             ));
-            //         }
-            //         else if ($command['COMMAND_PARAMS'] == 5)
-            //         {
-            //             $attach[] = Array("GRID" => Array(
-            //                 Array("VALUE" => "AZURE","DISPLAY" => "LINE", "WIDTH" => 100),
-            //                 Array("VALUE" => "#29619b","COLOR" => "#29619b","DISPLAY" => "LINE"),
-            //             ));
-            //             $attach[] = Array("GRID" => Array(
-            //                 Array("VALUE" => "ORANGE", "DISPLAY" => "LINE", "WIDTH" => 100),
-            //                 Array("VALUE" => "#e8a441", "COLOR" => "#e8a441", "DISPLAY" => "LINE"),
-            //             ));
-            //         }
-            //         $keyboard = Array(
-            //             Array("TEXT" => $command['COMMAND_PARAMS'] == 1? "· 1 ·": "1", "COMMAND" => "echoList", "COMMAND_PARAMS" => "1", "DISPLAY" => "LINE", "BLOCK" => "Y"),
-            //             Array("TEXT" => $command['COMMAND_PARAMS'] == 2? "· 2 ·": "2", "COMMAND" => "echoList", "COMMAND_PARAMS" => "2", "DISPLAY" => "LINE", "BLOCK" => "Y"),
-            //             Array("TEXT" => $command['COMMAND_PARAMS'] == 3? "· 3 ·": "3", "COMMAND" => "echoList", "COMMAND_PARAMS" => "3", "DISPLAY" => "LINE", "BLOCK" => "Y"),
-            //             Array("TEXT" => $command['COMMAND_PARAMS'] == 4? "· 4 ·": "4", "COMMAND" => "echoList", "COMMAND_PARAMS" => "4", "DISPLAY" => "LINE", "BLOCK" => "Y"),
-            //             Array("TEXT" => $command['COMMAND_PARAMS'] == 5? "· 5 ·": "5", "COMMAND" => "echoList", "COMMAND_PARAMS" => "5", "DISPLAY" => "LINE", "BLOCK" => "Y"),
-            //         );
-
-            //         if (!$initList && $command['COMMAND_CONTEXT'] == 'KEYBOARD')
-            //         {
-            //             $result = restCommand('imbot.message.update', Array(
-            //                 "BOT_ID" => $command['BOT_ID'],
-            //                 "MESSAGE_ID" => $command['MESSAGE_ID'],
-            //                 "ATTACH" => $attach,
-            //                 "KEYBOARD" => $keyboard
-            //             ), $_REQUEST["auth"]);
-            //         }
-            //         else
-            //         {
-            //             $result = restCommand('imbot.command.answer', Array(
-            //                 "COMMAND_ID" => $command['COMMAND_ID'],
-            //                 "MESSAGE_ID" => $command['MESSAGE_ID'],
-            //                 "MESSAGE" => "List of colors",
-            //                 "ATTACH" => $attach,
-            //                 "KEYBOARD" => $keyboard
-            //             ), $_REQUEST["auth"]);
-            //         }
-            //     }
-            //     else if ($command['COMMAND'] == 'help')
-            //     {
-            //         $keyboard = Array(
-            //             Array(
-            //                 "TEXT" => "Bitrix24",
-            //                 'LINK' => "http://bitrix24.com",
-            //                 "BG_COLOR" => "#29619b",
-            //                 "TEXT_COLOR" => "#fff",
-            //                 "DISPLAY" => "LINE",
-            //             ),
-            //             Array(
-            //                 "TEXT" => "BitBucket",
-            //                 "LINK" => "https://bitbucket.org/Bitrix24com/rest-bot-echotest",
-            //                 "BG_COLOR" => "#2a4c7c",
-            //                 "TEXT_COLOR" => "#fff",
-            //                 "DISPLAY" => "LINE",
-            //             ),
-            //             Array("TYPE" => "NEWLINE"),
-            //             Array("TEXT" => "Echo", "COMMAND" => "echo", "COMMAND_PARAMS" => "test from keyboard", "DISPLAY" => "LINE"),
-            //             Array("TEXT" => "List", "COMMAND" => "echoList", "DISPLAY" => "LINE"),
-            //             Array("TEXT" => "Help", "COMMAND" => "help", "DISPLAY" => "LINE"),
-            //         );
-
-            //         $result = restCommand('imbot.command.answer', Array(
-            //             "COMMAND_ID" => $command['COMMAND_ID'],
-            //             "MESSAGE_ID" => $command['MESSAGE_ID'],
-            //             "MESSAGE" => "Hello! My name is EchoBot :)[br] I designed to answer your questions!",
-            //             "KEYBOARD" => $keyboard
-            //         ), $_REQUEST["auth"]);
-            //     }
-            // }
+            req.body['data']['COMMAND'].forEach((command) => {
+                if (command['COMMAND'] === 'masssend') {
+                    const stringToSearch = req.body['data']['COMMAND_PARAMS'].match(/^.*(?=-)/gm)[0];
+                    console.log('Department to search: ', stringToSearch);
+                    const users = searchUsers(stringToSearch, req.body["auth"]);
+                    console.log('Users to mass send: ', users);
+                    result = restCommand('imbot.command.answer', {
+                        "COMMAND_ID": command['COMMAND_ID'],
+                        "MESSAGE_ID": command['MESSAGE_ID'],
+                        "MESSAGE": "Ответ на команду",
+                        "ATTACH": [
+                            { "MESSAGE": `ответ на: /${command['COMMAND']} ${command['COMMAND_PARAMS']}` }
+                        ]
+                        }, req.body["auth"]
+                    );
+                } else {
+                    result = restCommand('imbot.command.answer', {
+                        "COMMAND_ID": command['COMMAND_ID'],
+                        "MESSAGE_ID": command['MESSAGE_ID'],
+                        "MESSAGE": "Неизвестная команда",
+                        "ATTACH": [
+                            { "MESSAGE": `ответ на: /${command['COMMAND']} ${command['COMMAND_PARAMS']}` }
+                        ]
+                        }, req.body["auth"]
+                    );
+                }
+            });
 
             // write debug log
             // writeToLog($result, 'ImBot Event message add');
@@ -829,17 +688,12 @@ const restAuth = async (auth) => {
 	return result;
 }
 
-const base64_encode = (file) => {
+const searchUsers = async (str, auth) => {
     let result;
-    try {
-        result = fs.readFileSync(file, { encoding: 'base64' });
-    } catch(err) {
-        console.log('Avatar error: ', err);
-        result= "";
-    }
-    console.log('Avatar result: ', result);
+    result = await restCommand('im.search.user.list', { 'FIND': str }, auth);
     return result;
 }
+
 
 /**
  * Write data to log file. (by default disabled)
@@ -924,3 +778,47 @@ module.exports = app;
 //         'Сообщение от Евгений Хайдаршин: dfdfggd\n' +
 //         '------------------------------------------------------\n' +
 //         'С цитатой',
+
+
+
+// --------------------------------------------------------------------------------------------------------------------------------------
+// [COMMAND] => Array // Массив команд, которые были вызваны пользователем
+// (
+//     [14] => Array 
+//     (
+//       [AUTH] => Array // Параметры для авторизации под чат-ботом для выполнения действий
+//       (
+//          [domain] => b24.hazz
+//          [member_id] => d41d8cd98f00b204e9800998ecf8427e
+//          [application_token] => 8006ddd764e69deb28af0c768b10ed65
+//       )
+//       [BOT_ID] => 62 // Идентификатор чат-бота
+//       [BOT_CODE] => echobot // Код чат-бота
+//       [COMMAND] => echo // Вызванная команда
+//       [COMMAND_ID] => 14 // Идентификатор команды
+//       [COMMAND_PARAMS] => test // Параметры, с которыми была вызвана команда
+//       [COMMAND_CONTEXT] => TEXTAREA // Контекст выполнения команды. TEXTAREA, если команда введена руками, или KEYBOARD, если нажал на кнопку в клавиатуре
+//       [MESSAGE_ID] => 1221 // Идентификатор сообщения, на которое необходимо ответить
+//     )
+// )
+// [PARAMS] => Array // Массив данных сообщения
+// (
+//     [DIALOG_ID] => 1    // Идентифкатор диалога
+//     [CHAT_TYPE] => P    // Тип сообщения и чата, может быть P (чат один-на-один), C (с ограниченным количеством участников), O (публичный чат)
+//     [MESSAGE_ID] => 1221 // Идентификатор сообщения
+//     [MESSAGE] => /echo test // Сообщение
+//     [MESSAGE_ORIGINAL] => /echo test // Оригинальное сообщение с BB-кодом бота (параметр доступен только в групповых чатах)
+//     [FROM_USER_ID] => 1 // Идентификатор пользователя отправившего сообщение
+//     [TO_USER_ID] => 2 // Идентификатор другого пользователя (параметр доступен только в чатах один-на-один)
+//     [TO_CHAT_ID] => 6   // Идентификатор чата (параметр доступен только в групповых чатах)
+//     [LANGUAGE] => ru    // Идентификатор языка портала по умолчанию
+// )
+// [USER] => Array // Массив данных автора сообщения, может быть пустым, если ID = 0
+// (
+//     [ID] => 1 // Идентификатор пользователя
+//     [NAME] => Евгений Шеленков // Имя и фамилия пользователя
+//     [FIRST_NAME] => Евгений // Имя пользователя
+//     [LAST_NAME] => Шеленков // Фамилия пользователя
+//     [WORK_POSITION] => // Занимаемая должность
+//     [GENDER] => M // Пол, может быть либо M (мужской), либо F (женский)
+// )
