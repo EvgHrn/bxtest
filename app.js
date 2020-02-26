@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const supportGroup = ["1819"];
+const supportGroup = ["1819", "1514"];
 
 let config;
 
@@ -48,8 +48,6 @@ try {
 }
 
 app.use(async (req, res, next) => {
-
-  
 
   if (req.body.event) {
     let result;
@@ -73,10 +71,12 @@ app.use(async (req, res, next) => {
                 );
             }
         } else if(req.body["data"]["PARAMS"]["MESSAGE"].match(/(?<=id)\d*/gm)) {
+            //Message from support group
             console.log('Message from support group');
             const msg = req.body["data"]["PARAMS"]["MESSAGE"];
             const toUserId = msg.match(/(?<=id)\d*/gm);
             console.log('Find id: ', toUserId[0]);
+            //Answer to user
             result = await restCommand(
                 "imbot.message.add",
                 {
@@ -86,7 +86,22 @@ app.use(async (req, res, next) => {
                 },
                 req.body["auth"],
             );
+            //Answer to other support
+            for(let i = 0; i < supportGroup.length; i++) {
+                if(supportGroup[i] === req.body["data"]["USER"]["ID"]) continue;
+                console.log('Answer to ', supportGroup[i]);
+                result = await restCommand(
+                    "imbot.message.add",
+                    {
+                      // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
+                      DIALOG_ID: supportGroup[i],
+                      MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
+                    },
+                    req.body["auth"],
+                );
+            }
         } else {
+            //no Quotation error
             console.log('Quotation error in: ', req.body["data"]["PARAMS"]["MESSAGE"]);
             result = await restCommand(
                 "imbot.message.add",
