@@ -204,7 +204,7 @@ app.use(async (req, res, next) => {
                             {
                               // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
                               DIALOG_ID: usersIds[i],
-                              MESSAGE: `Рассылка от ${req.body['data']["PARAMS"]["DIALOG_ID"]}: ${msg}`
+                              MESSAGE: `Рассылка от ${req.body['data']["USER"]["NAME"]}: ${msg}`
                             },
                             req.body["auth"],
                         );
