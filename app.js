@@ -9,6 +9,7 @@ const b24 = require("b24");
 const fetch = require("node-fetch");
 var querystring = require('qs');
 const bodyParser = require('body-parser');
+var fs = require('fs');
 const db = require("./utils/db");
 
 require("dotenv").config();
@@ -155,21 +156,21 @@ app.use(async (req, res, next) => {
         result = await restCommand(
           "imbot.register",
           {
-            CODE: "Test Factory Support",
+            CODE: "Вопросы производству",
             TYPE: "H",
             EVENT_MESSAGE_ADD: handlerBackUrl,
             EVENT_WELCOME_MESSAGE: handlerBackUrl,
             EVENT_BOT_DELETE: handlerBackUrl,
             // 'OPENLINE': 'Y', // this flag only for Open Channel mode http://bitrix24.ru/~bot-itr
             PROPERTIES: {
-              NAME: "Test factory support",
+              NAME: "Вопросы производству",
               COLOR: "GREEN",
-              EMAIL: "test@test.ru",
-              PERSONAL_BIRTHDAY: "2016-03-11",
-              WORK_POSITION: "Test factory support bot",
+              EMAIL: "evg.hrn@gmail.com",
+              PERSONAL_BIRTHDAY: "2020-02-26",
+              WORK_POSITION: "Вопросы производству",
               PERSONAL_WWW: "http://bitrix24.com",
               PERSONAL_GENDER: "M",
-              // 'PERSONAL_PHOTO': base64_encode(file_get_contents(__DIR__.'/avatar.png')),
+              PERSONAL_PHOTO: base64_encode('./public/avatar.png'),
             },
           },
           req.body["auth"],
@@ -659,6 +660,13 @@ const restAuth = async (auth) => {
 		result = false;
 	}
 	return result;
+}
+
+const base64_encode = (file) => {
+    // read binary data
+    var bitmap = fs.readFileSync(file);
+    // convert binary data to base64 encoded string
+    return new Buffer(bitmap).toString('base64');
 }
 
 /**
