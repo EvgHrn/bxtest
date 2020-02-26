@@ -76,7 +76,7 @@ app.use(async (req, res, next) => {
             console.log('Message from support group');
             const msg = req.body["data"]["PARAMS"]["MESSAGE"];
             const toUserId = msg.match(/(?<=id)\d*/gm);
-            console.log('Find id: ', toUserId);
+            console.log('Find id: ', toUserId[0]);
             result = await restCommand(
                 "imbot.message.add",
                 {
