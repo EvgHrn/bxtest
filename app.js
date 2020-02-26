@@ -32,10 +32,16 @@ try {
     db.read();
   config = db.get('configs').value();
   console.log("Got params from db: ", config);
-  if (config === undefined) config = {};
+  if (config === undefined) {
+    db.defaults({ configs: {} })
+        .write()
+    config = {};
+  } 
 } catch (err) {
   console.log("Getting params from db error: ", err);
   console.log("Reset config");
+  db.defaults({ configs: {} })
+    .write()
   config = {};
 }
 
