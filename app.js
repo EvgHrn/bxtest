@@ -29,7 +29,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 let config;
 
 try {
-  config = db.object;
+    db.read();
+  config = db.get('configs').value();
   console.log("Got params from db: ", config);
   if (config === undefined) config = {};
 } catch (err) {
@@ -510,10 +511,10 @@ app.use(async (req, res, next) => {
  */
 const saveParams = (params) => {
     console.log("Gonna save new config: ", params);
-    db.get('posts')
+    db.get('configs')
         .push(params)
         .write()
-    console.log("Saved configs: ", db.object);
+    console.log("Saved configs: ", db.get('configs').value());
     return true;
 }
 
