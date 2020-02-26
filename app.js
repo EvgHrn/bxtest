@@ -30,7 +30,8 @@ let config;
 
 try {
     db.read();
-  config = db.get('configs').value();
+    config = JSON.stringify(db.getState());
+//   config = db.get('configs').value();
   console.log("Got params from db: ", config);
   if (config === undefined) {
     db.defaults({ configs: {} })
