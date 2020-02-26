@@ -194,13 +194,14 @@ app.use(async (req, res, next) => {
                     const stringToSearch = req.body['data']['COMMAND'][0]['COMMAND_PARAMS'].match(/^.*(?=-)/gm)[0];
                     console.log('Department to search: ', stringToSearch);
                     const users = await searchUsers(stringToSearch, req.body["auth"]);
+                    const usersIds = Object.keys(users);
                     console.log('Users to mass send: ', users);
                     result = await restCommand('imbot.command.answer', {
                         "COMMAND_ID": command['COMMAND_ID'],
                         "MESSAGE_ID": command['MESSAGE_ID'],
                         "MESSAGE": `Ответ на команду /${command['COMMAND']} ${command['COMMAND_PARAMS']}`,
                         "ATTACH": [
-                            { "MESSAGE": `Разослано пользователям:\n ${users.map(user => `${user}\n`)}` }
+                            { "MESSAGE": `Разослано пользователям:\n ${users.map(user => `${user.name}\n`)}` }
                         ]
                         }, req.body["auth"]
                     );
@@ -692,7 +693,7 @@ const restAuth = async (auth) => {
 const searchUsers = async (str, auth) => {
     let result;
     result = await restCommand('im.search.user.list', { 'FIND': str }, auth);
-    return Object.keys(result.result);
+    return result.result;
 }
 
 
