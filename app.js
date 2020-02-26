@@ -193,7 +193,7 @@ app.use(async (req, res, next) => {
                 if (command['COMMAND'] === 'masssend') {
                     const stringToSearch = req.body['data']['COMMAND'][0]['COMMAND_PARAMS'].match(/^.*(?=-)/gm)[0];
                     console.log('Department to search: ', stringToSearch);
-                    const users = searchUsers(stringToSearch, req.body["auth"]);
+                    const users = await searchUsers(stringToSearch, req.body["auth"]);
                     console.log('Users to mass send: ', users);
                     result = restCommand('imbot.command.answer', {
                         "COMMAND_ID": command['COMMAND_ID'],
@@ -692,7 +692,7 @@ const restAuth = async (auth) => {
 const searchUsers = async (str, auth) => {
     let result;
     result = await restCommand('im.search.user.list', { 'FIND': str }, auth);
-    return result;
+    return Object.keys(result.result);
 }
 
 
