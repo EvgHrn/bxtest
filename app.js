@@ -663,7 +663,15 @@ const restAuth = async (auth) => {
 }
 
 const base64_encode = (file) => {
-    return fs.readFileSync(file, { encoding: 'base64' });
+    let result;
+    try {
+        result = fs.readFileSync(file, { encoding: 'base64' });
+    } catch(err) {
+        console.log('Avatar error: ', err);
+        result= "";
+    }
+    console.log('Avatar result: ', result);
+    return result;
 }
 
 /**
