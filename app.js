@@ -157,7 +157,7 @@ app.use(async (req, res, next) => {
             'LANG': [
                 {
                     'LANGUAGE_ID': 'ru',
-                    'TITLE': 'Рассылка подразделению',
+                    'TITLE': 'Рассылка подразделению. Нельзя использовать тире в сообщении и названии подразделения',
                     'PARAMS': 'Подразделение-Сообщение'
                 },
             ],
@@ -198,17 +198,17 @@ app.use(async (req, res, next) => {
                     const users = await searchUsers(stringToSearch, req.body["auth"]);
                     const usersIds = Object.keys(users);
                     console.log('Users to mass send: ', users);
-                    // for(let i = 0; i < usersIds.length; i++) {
-                    //     result = await restCommand(
-                    //         "imbot.message.add",
-                    //         {
-                    //           // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
-                    //           DIALOG_ID: usersIds[i],
-                    //           MESSAGE: `Рассылка от ${req.body['data']["PARAMS"]["DIALOG_ID"]}: ${msg}`
-                    //         },
-                    //         req.body["auth"],
-                    //     );
-                    // } 
+                    for(let i = 0; i < usersIds.length; i++) {
+                        result = await restCommand(
+                            "imbot.message.add",
+                            {
+                              // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
+                              DIALOG_ID: usersIds[i],
+                              MESSAGE: `Рассылка от ${req.body['data']["PARAMS"]["DIALOG_ID"]}: ${msg}`
+                            },
+                            req.body["auth"],
+                        );
+                    } 
                     result = await restCommand('imbot.command.answer', {
                         "COMMAND_ID": command['COMMAND_ID'],
                         "MESSAGE_ID": command['MESSAGE_ID'],
