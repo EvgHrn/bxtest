@@ -298,7 +298,7 @@ app.use(async (req, res, next) => {
 						console.log("Got command deletesupportusers");
 						const usersToDeleteArr = command["COMMAND_PARAMS"].split(",").map(id => id.trim());
 						console.log("Gonna delete support users: ", usersToDeleteArr);
-						const supportGroup = deleteSupportUsers(usersToDeleteArr);
+						supportGroup = deleteSupportUsers(usersToDeleteArr);
 						console.log("allSupportUserAfterUpdate: ", supportGroup);
           } else {
             result = await restCommand(
