@@ -9,6 +9,8 @@ var querystring = require("qs");
 const bodyParser = require("body-parser");
 var fs = require("fs");
 const db = require("./utils/db");
+const getSupportUsers = require("./utils/users");
+const addSupportUsers = require("./utils/users");
 const avatar = require("./utils/avatar");
 
 require("dotenv").config();
@@ -26,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-const supportGroup = ["1819", "1600", "3", "1480", "1588"];
+// const supportGroup = ["1819", "1600", "3", "1480", "1588"];
 // const supportGroup = ["1819"];
 
 let config;
@@ -63,9 +65,9 @@ app.use(async (req, res, next) => {
               {
                 // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
                 DIALOG_ID: supportGroup[i],
-                MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
+                MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`
               },
-              req.body["auth"],
+              req.body["auth"]
             );
           }
         } else if (
@@ -82,9 +84,9 @@ app.use(async (req, res, next) => {
             {
               // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
               DIALOG_ID: toUserId[0],
-              MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
+              MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`
             },
-            req.body["auth"],
+            req.body["auth"]
           );
           //Answer to other support
           for (let i = 0; i < supportGroup.length; i++) {
@@ -95,24 +97,24 @@ app.use(async (req, res, next) => {
               {
                 // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
                 DIALOG_ID: supportGroup[i],
-                MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
+                MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`
               },
-              req.body["auth"],
+              req.body["auth"]
             );
           }
         } else {
           //no Quotation error
           console.log(
             "Quotation error in: ",
-            req.body["data"]["PARAMS"]["MESSAGE"],
+            req.body["data"]["PARAMS"]["MESSAGE"]
           );
           result = await restCommand(
             "imbot.message.add",
             {
               DIALOG_ID: req.body["data"]["PARAMS"]["FROM_USER_ID"],
-              MESSAGE: `Ошибка цитаты`,
+              MESSAGE: `Ошибка цитаты`
             },
-            req.body["auth"],
+            req.body["auth"]
           );
         }
 
@@ -131,19 +133,18 @@ app.use(async (req, res, next) => {
             EVENT_MESSAGE_ADD: handlerBackUrl,
             EVENT_WELCOME_MESSAGE: handlerBackUrl,
             EVENT_BOT_DELETE: handlerBackUrl,
-            // 'OPENLINE': 'Y', // this flag only for Open Channel mode http://bitrix24.ru/~bot-itr
             PROPERTIES: {
-              "NAME": "Вопросы производству",
-              "COLOR": "GREEN",
-              "EMAIL": "evg.hrn@gmail.com",
-              "PERSONAL_BIRTHDAY": "2020-02-26",
-              "WORK_POSITION": "Вопросы производству",
-              "PERSONAL_WWW": "http://bitrix24.com",
-              "PERSONAL_GENDER": "M",
-                // "PERSONAL_PHOTO": avatar,
-            },
+              NAME: "Вопросы производству",
+              COLOR: "GREEN",
+              EMAIL: "evg.hrn@gmail.com",
+              PERSONAL_BIRTHDAY: "2020-02-26",
+              WORK_POSITION: "Вопросы производству",
+              PERSONAL_WWW: "http://bitrix24.com",
+              PERSONAL_GENDER: "M"
+              // "PERSONAL_PHOTO": avatar,
+            }
           },
-          req.body["auth"],
+          req.body["auth"]
         );
 
         const botId = result["result"];
@@ -161,58 +162,58 @@ app.use(async (req, res, next) => {
                 LANGUAGE_ID: "ru",
                 TITLE:
                   "Рассылка подразделению. Нельзя использовать тире в сообщении и названии подразделения",
-                PARAMS: "Подразделение-Сообщение",
-              },
+                PARAMS: "Подразделение-Сообщение"
+              }
             ],
-            EVENT_COMMAND_ADD: handlerBackUrl,
+            EVENT_COMMAND_ADD: handlerBackUrl
           },
-          req.body["auth"],
+          req.body["auth"]
         );
 
         const commandMassSend = result["result"];
 
         result = await restCommand(
-            "imbot.command.register",
-            {
-              BOT_ID: botId,
-              COMMAND: "addsupportusers",
-              COMMON: "Y",
-              HIDDEN: "N",
-              EXTRANET_SUPPORT: "N",
-              LANG: [
-                {
-                  LANGUAGE_ID: "ru",
-                  TITLE: "Добавить пользователей в группу поддержки",
-                  PARAMS: "id пользователей через запятую",
-                },
-              ],
-              EVENT_COMMAND_ADD: handlerBackUrl,
-            },
-            req.body["auth"],
+          "imbot.command.register",
+          {
+            BOT_ID: botId,
+            COMMAND: "addsupportusers",
+            COMMON: "Y",
+            HIDDEN: "N",
+            EXTRANET_SUPPORT: "N",
+            LANG: [
+              {
+                LANGUAGE_ID: "ru",
+                TITLE: "Добавить пользователей в группу поддержки",
+                PARAMS: "id пользователей через запятую"
+              }
+            ],
+            EVENT_COMMAND_ADD: handlerBackUrl
+          },
+          req.body["auth"]
         );
-  
+
         const commandAddSupportUsers = result["result"];
 
         result = await restCommand(
-            "imbot.command.register",
-            {
-              BOT_ID: botId,
-              COMMAND: "deletesupportusers",
-              COMMON: "Y",
-              HIDDEN: "N",
-              EXTRANET_SUPPORT: "N",
-              LANG: [
-                {
-                  LANGUAGE_ID: "ru",
-                  TITLE: "Удалить пользователей из группы поддержки",
-                  PARAMS: "id пользователей через запятую",
-                },
-              ],
-              EVENT_COMMAND_ADD: handlerBackUrl,
-            },
-            req.body["auth"],
+          "imbot.command.register",
+          {
+            BOT_ID: botId,
+            COMMAND: "deletesupportusers",
+            COMMON: "Y",
+            HIDDEN: "N",
+            EXTRANET_SUPPORT: "N",
+            LANG: [
+              {
+                LANGUAGE_ID: "ru",
+                TITLE: "Удалить пользователей из группы поддержки",
+                PARAMS: "id пользователей через запятую"
+              }
+            ],
+            EVENT_COMMAND_ADD: handlerBackUrl
+          },
+          req.body["auth"]
         );
-  
+
         const commandDeleteSupportUsers = result["result"];
 
         // save params
@@ -221,7 +222,7 @@ app.use(async (req, res, next) => {
           COMMAND_MASSSEND: commandMassSend,
           COMMAND_ADDSUPPORTUSERS: commandAddSupportUsers,
           COMMAND_DELETESUPPORTUSERS: commandDeleteSupportUsers,
-          AUTH: req.body["auth"],
+          AUTH: req.body["auth"]
         };
 
         saveParams(config);
@@ -241,12 +242,8 @@ app.use(async (req, res, next) => {
 
         req.body["data"]["COMMAND"].forEach(async command => {
           if (command["COMMAND"] === "masssend") {
-            const stringToSearch = req.body["data"]["COMMAND"][0][
-              "COMMAND_PARAMS"
-            ].match(/^.*(?=-)/gm)[0];
-            const msg = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(
-              /(?<=-).*/gm,
-            )[0];
+            const stringToSearch = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/^.*(?=-)/gm)[0];
+            const msg = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/(?<=-).*/gm)[0];
             console.log("Department to search: ", stringToSearch);
             console.log("Message to mass send: ", msg);
             const users = await searchUsers(stringToSearch, req.body["auth"]);
@@ -258,9 +255,9 @@ app.use(async (req, res, next) => {
                 {
                   // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
                   DIALOG_ID: usersIds[i],
-                  MESSAGE: `Рассылка от ${req.body["data"]["USER"]["NAME"]}: ${msg}`,
+                  MESSAGE: `Рассылка от ${req.body["data"]["USER"]["NAME"]}: ${msg}`
                 },
-                req.body["auth"],
+                req.body["auth"]
               );
             }
             result = await restCommand(
@@ -271,15 +268,54 @@ app.use(async (req, res, next) => {
                 MESSAGE: `Ответ на команду /${command["COMMAND"]} ${stringToSearch}-${msg}`,
                 ATTACH: [
                   {
-                    MESSAGE: `Разослано пользователям:\n ${Object.keys(
-                      users,
-                    ).map(key => `${users[key].name}\n`)}`,
-                  },
-                ],
+                    MESSAGE: `Разослано пользователям:\n ${Object.keys(users).map(key => `${users[key].name}\n`)}`
+                  }
+                ]
               },
-              req.body["auth"],
+              req.body["auth"]
             );
-          } else {
+					} else if(command["COMMAND"] === "addsupportusers") {
+						console.log("Got command addsupportusers");
+						let supportUsers = getSupportUsers();
+						if(!supportUsers) {
+							supportUsers = ["1819"];
+						}
+						const newUsersArr = command["COMMAND_PARAMS"].split(",").map(id => id.trim());
+						console.log("Gonna add support users: ", newUsersArr);
+
+						// const stringToSearch = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/^.*(?=-)/gm)[0];
+            // const msg = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/(?<=-).*/gm)[0];
+            // console.log("Department to search: ", stringToSearch);
+            // console.log("Message to mass send: ", msg);
+            // const users = await searchUsers(stringToSearch, req.body["auth"]);
+            // const usersIds = Object.keys(users);
+            // console.log("Users to mass send: ", users);
+            // for (let i = 0; i < usersIds.length; i++) {
+            //   result = await restCommand(
+            //     "imbot.message.add",
+            //     {
+            //       // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
+            //       DIALOG_ID: usersIds[i],
+            //       MESSAGE: `Рассылка от ${req.body["data"]["USER"]["NAME"]}: ${msg}`
+            //     },
+            //     req.body["auth"]
+            //   );
+            // }
+            // result = await restCommand(
+            //   "imbot.command.answer",
+            //   {
+            //     COMMAND_ID: command["COMMAND_ID"],
+            //     MESSAGE_ID: command["MESSAGE_ID"],
+            //     MESSAGE: `Ответ на команду /${command["COMMAND"]} ${stringToSearch}-${msg}`,
+            //     ATTACH: [
+            //       {
+            //         MESSAGE: `Разослано пользователям:\n ${Object.keys(users).map(key => `${users[key].name}\n`)}`
+            //       }
+            //     ]
+            //   },
+            //   req.body["auth"]
+            // );
+					} else {
             result = await restCommand(
               "imbot.command.answer",
               {
@@ -288,11 +324,11 @@ app.use(async (req, res, next) => {
                 MESSAGE: "Неизвестная команда",
                 ATTACH: [
                   {
-                    MESSAGE: `ответ на: /${command["COMMAND"]} ${command["COMMAND_PARAMS"]}`,
-                  },
-                ],
+                    MESSAGE: `ответ на: /${command["COMMAND"]} ${command["COMMAND_PARAMS"]}`
+                  }
+                ]
               },
-              req.body["auth"],
+              req.body["auth"]
             );
           }
         });
@@ -335,12 +371,12 @@ const restCommand = async (
   method,
   params = {},
   auth = {},
-  authRefresh = true,
+  authRefresh = true
 ) => {
   const queryUrl = `${auth["client_endpoint"]}${method}`;
   const queryData = querystring.stringify({
     ...params,
-    auth: auth["access_token"],
+    auth: auth["access_token"]
   });
 
   let result;
@@ -390,7 +426,7 @@ const restAuth = async auth => {
     grant_type: "refresh_token",
     client_id: process.env.BITRIX_CLIENT_ID,
     client_secret: process.env.BITRIX_CLIENT_SECRET,
-    refresh_token: auth["refresh_token"],
+    refresh_token: auth["refresh_token"]
   });
 
   let result;
