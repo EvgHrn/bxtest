@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 let supportGroup = getSupportUsers();
 
-if(supportGroup.length === 0) {
+if(!supportGroup || supportGroup.length === 0) {
 	supportGroup = ["1819"];
 }
 
