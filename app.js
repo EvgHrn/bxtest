@@ -31,6 +31,12 @@ app.use(express.static(path.join(__dirname, "public")));
 // const supportGroup = ["1819", "1600", "3", "1480", "1588"];
 // const supportGroup = ["1819"];
 
+let supportGroup = getSupportUsers();
+
+if(supportGroup.length === 0) {
+	supportGroup = ["1819"];
+}
+
 let config;
 
 try {
@@ -282,6 +288,7 @@ app.use(async (req, res, next) => {
 						}
 						const newUsersArr = command["COMMAND_PARAMS"].split(",").map(id => id.trim());
 						console.log("Gonna add support users: ", newUsersArr);
+						addSupportUsers(newUsersArr);
 
 						// const stringToSearch = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/^.*(?=-)/gm)[0];
             // const msg = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/(?<=-).*/gm)[0];
