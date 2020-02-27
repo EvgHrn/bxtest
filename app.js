@@ -45,13 +45,13 @@ try {
   console.log("Got params from db: ", config);
   if (config === undefined) {
     db.set("configs", []).write();
-    config = [];
+    config = {};
   }
 } catch (err) {
   console.log("Getting params from db error: ", err);
   console.log("Reset config");
   db.set("configs", []).write();
-  config = [];
+  config = {};
 }
 
 app.use(async (req, res, next) => {
