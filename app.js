@@ -55,9 +55,7 @@ app.use(async (req, res, next) => {
         // check the event - authorize this event or not
         if (!config[req.body["auth"]["application_token"]]) return false;
 
-        if (
-          !supportGroup.includes(req.body["data"]["PARAMS"]["FROM_USER_ID"])
-        ) {
+        if (!supportGroup.includes(req.body["data"]["PARAMS"]["FROM_USER_ID"])) {
           console.log("Message from common user");
           for (let i = 0; i < supportGroup.length; i++) {
             result = await restCommand(
@@ -173,10 +171,56 @@ app.use(async (req, res, next) => {
 
         const commandMassSend = result["result"];
 
+        result = await restCommand(
+            "imbot.command.register",
+            {
+              BOT_ID: botId,
+              COMMAND: "addsupportusers",
+              COMMON: "Y",
+              HIDDEN: "N",
+              EXTRANET_SUPPORT: "N",
+              LANG: [
+                {
+                  LANGUAGE_ID: "ru",
+                  TITLE: "Добавить пользователей в группу поддержки",
+                  PARAMS: "id пользователей через запятую",
+                },
+              ],
+              EVENT_COMMAND_ADD: handlerBackUrl,
+            },
+            req.body["auth"],
+        );
+  
+        const commandAddSupportUsers = result["result"];
+
+        result = await restCommand(
+            "imbot.command.register",
+            {
+              BOT_ID: botId,
+              COMMAND: "deletesupportusers",
+              COMMON: "Y",
+              HIDDEN: "N",
+              EXTRANET_SUPPORT: "N",
+              LANG: [
+                {
+                  LANGUAGE_ID: "ru",
+                  TITLE: "Удалить пользователей из группы поддержки",
+                  PARAMS: "id пользователей через запятую",
+                },
+              ],
+              EVENT_COMMAND_ADD: handlerBackUrl,
+            },
+            req.body["auth"],
+        );
+  
+        const commandDeleteSupportUsers = result["result"];
+
         // save params
         config[req.body["auth"]["application_token"]] = {
           BOT_ID: botId,
           COMMAND_MASSSEND: commandMassSend,
+          COMMAND_ADDSUPPORTUSERS: commandAddSupportUsers,
+          COMMAND_DELETESUPPORTUSERS: commandDeleteSupportUsers,
           AUTH: req.body["auth"],
         };
 
