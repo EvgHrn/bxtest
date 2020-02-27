@@ -24,7 +24,11 @@ const addSupportUsers = (usersArray) => {
       config = [];
       config["supportUsers"] = [];
     }
-    config["supportUsers"] = config["supportUsers"].concat(usersArray);
+    if(typeof config["supportUsers"] !== "undefined") {
+      config["supportUsers"] = config["supportUsers"].concat(usersArray);
+    } else {
+      config["supportUsers"] = usersArray;
+    }
     db.set("configs", config).write();
     console.log("Saved New getSupportUsers: ",getSupportUsers());
   } catch (err) {
