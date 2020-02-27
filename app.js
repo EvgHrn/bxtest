@@ -288,7 +288,9 @@ app.use(async (req, res, next) => {
 						}
 						const newUsersArr = command["COMMAND_PARAMS"].split(",").map(id => id.trim());
 						console.log("Gonna add support users: ", newUsersArr);
-						addSupportUsers(newUsersArr);
+						const allSupportUserAfterUpdate = addSupportUsers(newUsersArr);
+						console.log("allSupportUserAfterUpdate: ", allSupportUserAfterUpdate);
+						supportGroup = allSupportUserAfterUpdate;
 
 						// const stringToSearch = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/^.*(?=-)/gm)[0];
             // const msg = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/(?<=-).*/gm)[0];

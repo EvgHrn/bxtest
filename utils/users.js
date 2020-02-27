@@ -30,10 +30,13 @@ const addSupportUsers = (usersArray) => {
       config["supportUsers"] = usersArray;
     }
     db.set("configs", config).write();
-    console.log("Saved New getSupportUsers: ",getSupportUsers());
+    const savedSupportUsers = getSupportUsers();
+    console.log("Saved New getSupportUsers: ", savedSupportUsers);
+    return savedSupportUsers;
   } catch (err) {
     console.log("Getting params from db error: ", err);
   }
+  return [];
 };
 
 module.exports = getSupportUsers;
