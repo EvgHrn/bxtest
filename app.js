@@ -11,6 +11,7 @@ var fs = require("fs");
 const db = require("./utils/db");
 const getSupportUsers = require("./utils/users");
 const addSupportUsers = require("./utils/users");
+const deleteSupportUsers = require("./utils/users");
 const avatar = require("./utils/avatar");
 
 require("dotenv").config();
@@ -293,39 +294,13 @@ app.use(async (req, res, next) => {
 						supportGroup = addSupportUsers(newUsersArr);
 						console.log("allSupportUserAfterUpdate: ", supportGroup);
 
-						// const stringToSearch = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/^.*(?=-)/gm)[0];
-            // const msg = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/(?<=-).*/gm)[0];
-            // console.log("Department to search: ", stringToSearch);
-            // console.log("Message to mass send: ", msg);
-            // const users = await searchUsers(stringToSearch, req.body["auth"]);
-            // const usersIds = Object.keys(users);
-            // console.log("Users to mass send: ", users);
-            // for (let i = 0; i < usersIds.length; i++) {
-            //   result = await restCommand(
-            //     "imbot.message.add",
-            //     {
-            //       // DIALOG_ID: req.body["data"]["PARAMS"]["DIALOG_ID"],
-            //       DIALOG_ID: usersIds[i],
-            //       MESSAGE: `Рассылка от ${req.body["data"]["USER"]["NAME"]}: ${msg}`
-            //     },
-            //     req.body["auth"]
-            //   );
-            // }
-            // result = await restCommand(
-            //   "imbot.command.answer",
-            //   {
-            //     COMMAND_ID: command["COMMAND_ID"],
-            //     MESSAGE_ID: command["MESSAGE_ID"],
-            //     MESSAGE: `Ответ на команду /${command["COMMAND"]} ${stringToSearch}-${msg}`,
-            //     ATTACH: [
-            //       {
-            //         MESSAGE: `Разослано пользователям:\n ${Object.keys(users).map(key => `${users[key].name}\n`)}`
-            //       }
-            //     ]
-            //   },
-            //   req.body["auth"]
-            // );
-					} else {
+					} else if(command["COMMAND"] === "deletesupportusers") {
+						console.log("Got command deletesupportusers");
+						const usersToDeleteArr = command["COMMAND_PARAMS"].split(",").map(id => id.trim());
+						console.log("Gonna delete support users: ", usersToDeleteArr);
+						const supportGroup = deleteSupportUsers(usersToDeleteArr);
+						console.log("allSupportUserAfterUpdate: ", supportGroup);
+          } else {
             result = await restCommand(
               "imbot.command.answer",
               {

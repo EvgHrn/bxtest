@@ -40,5 +40,34 @@ const addSupportUsers = (usersArray = []) => {
   return [];
 };
 
+const deleteSupportUsers = (usersArray = []) => {
+  console.log("deleteSupportUsers: Call with params: ", usersArray);
+  if(!usersArray.length) return [];
+  let config;
+  try {
+    db.read();
+    config = db.getState().configs;
+    console.log("deleteSupportUsers: Got params from db: ", config);
+    if (config === undefined) {
+      return [];
+    }
+    if(typeof config["supportUsers"] !== "undefined") {
+      usersArray.map((userToDelete) => {
+        config["supportUsers"] = config["supportUsers"].filter((supportUser) => supportUser !== userToDelete);
+      });
+    } else {
+      return [];
+    }
+    db.set("configs", config).write();
+    const savedSupportUsers = getSupportUsers();
+    console.log("deleteSupportUsers: Saved New getSupportUsers: ", savedSupportUsers);
+    return savedSupportUsers;
+  } catch (err) {
+    console.log("deleteSupportUsers: Getting params from db error: ", err);
+  }
+  return [];
+};
+
 module.exports = getSupportUsers;
 module.exports = addSupportUsers;
+module.exports = deleteSupportUsers;
