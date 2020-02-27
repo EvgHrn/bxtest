@@ -97,6 +97,7 @@ app.use(async (req, res, next) => {
           );
           //Answer to other support
           for (let i = 0; i < supportGroup.length; i++) {
+            if (supportGroup[i] === null) continue;
             if (supportGroup[i] === req.body["data"]["USER"]["ID"]) continue;
             console.log("Answer to ", supportGroup[i]);
             result = await restCommand(
@@ -289,9 +290,8 @@ app.use(async (req, res, next) => {
 						}
 						const newUsersArr = command["COMMAND_PARAMS"].split(",").map(id => id.trim());
 						console.log("Gonna add support users: ", newUsersArr);
-						const allSupportUserAfterUpdate = addSupportUsers(newUsersArr);
-						console.log("allSupportUserAfterUpdate: ", allSupportUserAfterUpdate);
-						supportGroup = allSupportUserAfterUpdate;
+						supportGroup = addSupportUsers(newUsersArr);
+						console.log("allSupportUserAfterUpdate: ", supportGroup);
 
 						// const stringToSearch = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/^.*(?=-)/gm)[0];
             // const msg = req.body["data"]["COMMAND"][0]["COMMAND_PARAMS"].match(/(?<=-).*/gm)[0];
