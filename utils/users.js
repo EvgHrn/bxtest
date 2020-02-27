@@ -6,20 +6,21 @@ const getSupportUsers = () => {
 		const config = db.getState().configs;
 		if (config === undefined) return false;
 		const supportUsers = config["supportUsers"];
-    console.log("Got supportUsers from db: ", supportUsers);
+    console.log("getSupportUsers: Got supportUsers from db: ", supportUsers);
     return supportUsers;
   } catch (err) {
-    console.log("Getting supportUsers from db error: ", err);
+    console.log("getSupportUsers: Getting supportUsers from db error: ", err);
     return false;
   }
 };
 
-const addSupportUsers = (usersArray) => {
+const addSupportUsers = (usersArray = []) => {
+  console.log("addSupportUsers: Call with params: ", usersArray);
   let config;
   try {
     db.read();
     config = db.getState().configs;
-    console.log("Got params from db: ", config);
+    console.log("addSupportUsers: Got params from db: ", config);
     if (config === undefined) {
       config = [];
       config["supportUsers"] = [];
@@ -31,10 +32,10 @@ const addSupportUsers = (usersArray) => {
     }
     db.set("configs", config).write();
     const savedSupportUsers = getSupportUsers();
-    console.log("Saved New getSupportUsers: ", savedSupportUsers);
+    console.log("addSupportUsers: Saved New getSupportUsers: ", savedSupportUsers);
     return savedSupportUsers;
   } catch (err) {
-    console.log("Getting params from db error: ", err);
+    console.log("addSupportUsers: Getting params from db error: ", err);
   }
   return [];
 };
