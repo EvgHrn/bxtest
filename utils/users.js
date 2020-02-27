@@ -22,7 +22,7 @@ const addSupportUsers = (usersArray = []) => {
     config = db.getState().configs;
     console.log("addSupportUsers: Got params from db: ", config);
     if (config === undefined) {
-      config = [];
+      config = {};
       config["supportUsers"] = [];
     }
     if(typeof config["supportUsers"] !== "undefined") {
