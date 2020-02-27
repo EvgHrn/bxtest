@@ -66,6 +66,7 @@ app.use(async (req, res, next) => {
         if (!supportGroup.includes(req.body["data"]["PARAMS"]["FROM_USER_ID"])) {
           console.log("Message from common user");
           for (let i = 0; i < supportGroup.length; i++) {
+						if(supportGroup[i] === null) continue;
             result = await restCommand(
               "imbot.message.add",
               {
