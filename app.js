@@ -9,6 +9,7 @@ var querystring = require("qs");
 const bodyParser = require("body-parser");
 var fs = require("fs");
 const db = require("./utils/db");
+const avatar = require("./utils/avatar");
 
 require("dotenv").config();
 
@@ -134,14 +135,14 @@ app.use(async (req, res, next) => {
             EVENT_BOT_DELETE: handlerBackUrl,
             // 'OPENLINE': 'Y', // this flag only for Open Channel mode http://bitrix24.ru/~bot-itr
             PROPERTIES: {
-              NAME: "Вопросы производству",
-              COLOR: "GREEN",
-              EMAIL: "evg.hrn@gmail.com",
-              PERSONAL_BIRTHDAY: "2020-02-26",
-              WORK_POSITION: "Вопросы производству",
-              PERSONAL_WWW: "http://bitrix24.com",
-              PERSONAL_GENDER: "M",
-              //   PERSONAL_PHOTO: base64_encode('./public/avatar.png'),
+              "NAME": "Вопросы производству",
+              "COLOR": "GREEN",
+              "EMAIL": "evg.hrn@gmail.com",
+              "PERSONAL_BIRTHDAY": "2020-02-26",
+              "WORK_POSITION": "Вопросы производству",
+              "PERSONAL_WWW": "http://bitrix24.com",
+              "PERSONAL_GENDER": "M",
+                "PERSONAL_PHOTO": avatar,
             },
           },
           req.body["auth"],
