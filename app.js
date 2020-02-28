@@ -246,6 +246,7 @@ app.use(async (req, res, next) => {
         if (!config[req.body["auth"]["application_token"]]) return false;
 
         console.log("Event ONIMCOMMANDADD with body: ", req.body);
+        console.log("Event ONIMCOMMANDADD with body[data][COMMAND]: ", req.body["data"]["COMMAND"]);
 
         result = false;
 

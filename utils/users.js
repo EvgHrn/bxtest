@@ -6,10 +6,8 @@ const getSupportUsers = () => {
 		const config = db.getState().configs;
 		if (config === undefined) return false;
 		const supportUsers = config["supportUsers"];
-    console.log("getSupportUsers: Got supportUsers from db: ", supportUsers);
     return supportUsers;
   } catch (err) {
-    console.log("getSupportUsers: Getting supportUsers from db error: ", err);
     return false;
   }
 };
