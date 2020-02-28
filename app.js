@@ -29,10 +29,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// const supportGroup = ["1819", "1600", "3", "1480", "1588"];
+const supportGroup = ["1819", "1600", "3", "1480", "1588"];
 // const supportGroup = ["1819"];
 
-let supportGroup = getSupportUsers();
+// let supportGroup = getSupportUsers();
 
 if(!supportGroup || supportGroup.length === 0) {
 	supportGroup = ["1819"];
@@ -292,14 +292,14 @@ app.use(async (req, res, next) => {
 						}
 						const newUsersArr = command["COMMAND_PARAMS"].split(",").map(id => id.trim());
 						console.log("Gonna add support users: ", newUsersArr);
-						supportGroup = addSupportUsers(newUsersArr);
+						// supportGroup = addSupportUsers(newUsersArr);
 						console.log("allSupportUserAfterUpdate: ", supportGroup);
 
 					} else if(command["COMMAND"] === "deletesupportusers") {
 						console.log("Got command deletesupportusers");
 						const usersToDeleteArr = command["COMMAND_PARAMS"].split(",").map(id => id.trim());
 						console.log("Gonna delete support users: ", usersToDeleteArr);
-						supportGroup = deleteSupportUsers(usersToDeleteArr);
+						// supportGroup = deleteSupportUsers(usersToDeleteArr);
 						console.log("allSupportUserAfterUpdate: ", supportGroup);
           } else {
             result = await restCommand(
