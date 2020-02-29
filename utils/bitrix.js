@@ -8,7 +8,11 @@ class Bitrix {
   constructor() {
     // const supportGroup = ["1819", "1600", "3", "1480", "1588"];
     // const supportGroup = ["1819"];
-    this.supportUsers = Db.getSupportUsers();
+		this.supportUsers = Db.getSupportUsers();
+		if (!this.supportUsers) {
+			this.supportUsers = ["1819"]; 
+			addSupportUsers(["1819"]);
+		}
     this.configs = Db.getConfigs();
   }
 
