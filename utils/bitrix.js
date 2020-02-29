@@ -11,7 +11,7 @@ class Bitrix {
 		this.supportUsers = Db.getSupportUsers();
 		if (!this.supportUsers) {
 			this.supportUsers = ["1819"]; 
-			addSupportUsers(["1819"]);
+			Db.addSupportUsers(["1819"]);
 		}
     this.configs = Db.getConfigs();
   }
