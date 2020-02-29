@@ -54,7 +54,7 @@ class Bitrix {
     //   },
     //   req.body["auth"],
     // );
-    const result = await restCommand(
+    const result = await this.restCommand(
       "imbot.message.add",
       {
         DIALOG_ID: userId,
@@ -114,7 +114,7 @@ class Bitrix {
     );
     const commandMassSend = result["result"];
 
-    result = await restCommand(
+    result = await this.restCommand(
       "imbot.command.register",
       {
         BOT_ID: botId,
@@ -136,7 +136,7 @@ class Bitrix {
 
     const commandAddSupportUsers = result["result"];
 
-    result = await restCommand(
+    result = await this.restCommand(
       "imbot.command.register",
       {
         BOT_ID: botId,
