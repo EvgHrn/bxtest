@@ -71,7 +71,8 @@ class Db {
   static saveConfig = config => {
     console.log("Gonna save new config: ", config);
     try {
-      db.get("configs")
+      dblow
+        .get("configs")
         .push(config)
         .write();
       console.log("New config successfully saved");
@@ -85,16 +86,16 @@ class Db {
 	static getConfigs = () => {
 		let configs;
 		try {
-			db.read();
-			configs = db.getState().configs;
+			dblow.read();
+			configs = dblow.getState().configs;
 			if (configs === undefined) {
-				db.set("configs", []).write();
+				dblow.set("configs", []).write();
 				configs = [];
 			}
 		} catch (err) {
 			console.log("Getting configs from db error: ", err);
 			console.log("Reset config");
-			db.set("configs", []).write();
+			dblow.set("configs", []).write();
 			configs = [];
 		}
 		return configs;
