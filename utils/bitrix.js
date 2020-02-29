@@ -65,7 +65,7 @@ class Bitrix {
     }
   };
 
-  registerBotAndCommands = async (botId, token, auth) => {
+  registerBotAndCommands = async (token, auth) => {
     let result = await this.restCommand(
       "imbot.register",
       {

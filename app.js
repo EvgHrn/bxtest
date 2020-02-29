@@ -96,7 +96,6 @@ app.use(async (req, res, next) => {
         console.log("ONAPPINSTALL event with body: ", req.body);
         // register new bot
         await bitrix.registerBotAndCommands(
-          botId,
           req.body["auth"]["application_token"],
           req.body["auth"],
         );
