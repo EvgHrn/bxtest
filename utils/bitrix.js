@@ -35,7 +35,7 @@ class Bitrix {
     }
   };
 
-  deleteSupportUser = userIdSrt => {
+  deleteSupportUser = userIdStr => {
     const result = Db.deleteSupportUser(userIdStr);
     if (result) {
       this.supportUsers = result;
@@ -125,8 +125,8 @@ class Bitrix {
         LANG: [
           {
             LANGUAGE_ID: "ru",
-            TITLE: "Добавить пользователей в группу поддержки",
-            PARAMS: "id пользователей через запятую",
+            TITLE: "Добавить пользователя в группу поддержки",
+            PARAMS: "id пользователя",
           },
         ],
         EVENT_COMMAND_ADD: process.env.SERVER_HOST,
@@ -147,8 +147,8 @@ class Bitrix {
         LANG: [
           {
             LANGUAGE_ID: "ru",
-            TITLE: "Удалить пользователей из группы поддержки",
-            PARAMS: "id пользователей через запятую",
+            TITLE: "Удалить пользователя из группы поддержки",
+            PARAMS: "id пользователя",
           },
         ],
         EVENT_COMMAND_ADD: process.env.SERVER_HOST,
