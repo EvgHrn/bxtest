@@ -33,7 +33,12 @@ app.use(async (req, res, next) => {
         const supportUsers = bitrix.getSupportUsers();
         const eventMessage = req.body["data"]["PARAMS"]["MESSAGE"];
         if (supportUsers.length === 1 && supportUsers[0] === "1819") {
-          //TODO send message about supportUsers error
+          console.log("Support group error. Use only 1819");
+          result = await bitrix.sendMessage(
+            req.body["data"]["PARAMS"]["FROM_USER_ID"],
+            `Ошибка группы поддержки`,
+            req.body["auth"],
+          );
         }
         // check the event - authorize this event or not
         if (!bitrix.checkAuth(req.body["auth"]["application_token"])) {
