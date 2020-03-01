@@ -10,30 +10,25 @@ class Db {
   static getSupportUsers = () => {
     try {
       dblow.read();
-      const configs = dblow.getState().configs;
-      if (configs === undefined) return false;
-      return configs["supportUsers"] ? configs["supportUsers"] : false;
+      const supportUsers = dblow.getState().supportUsers;
+      if (supportUsers === undefined) return false;
+      return supportUsers;
     } catch (err) {
       return false;
     }
 	};
 	
-  static addSupportUsers = (usersArray = []) => {
-    if (!usersArray.length) return false;
-    let configs;
+  static addSupportUser = (user) => {
+    if (!user) return false;
+    let supportUsers;
     try {
       dblow.read();
-      configs = dblow.getState().configs;
-      if (configs === undefined) {
-        configs = {};
-        configs["supportUsers"] = [];
+      supportUsers = dblow.getState().supportUsers;
+      if (supportUsers === undefined) {
+        supportUsers = ["1819"];
       }
-      if (typeof configs["supportUsers"] !== "undefined") {
-        configs["supportUsers"] = configs["supportUsers"].concat(usersArray);
-      } else {
-        configs["supportUsers"] = usersArray;
-      }
-      dblow.set("configs", configs).write();
+      supportUsers.push(user);
+      dblow.set("supportUsers", supportUsers).write();
       const savedSupportUsers = this.getSupportUsers();
       if (savedSupportUsers === false) return false;
       return savedSupportUsers;
@@ -42,24 +37,19 @@ class Db {
     }
   };
 
-  static deleteSupportUsers = (usersArray = []) => {
-    if (!usersArray.length) return false;
-    let configs;
+  static deleteSupportUser = (user) => {
+    if (!user) return false;
+    let supportUsers;
     try {
       dblow.read();
-      configs = dblow.getState().configs;
-      if (
-        configs === undefined ||
-        typeof configs["supportUsers"] === undefined
-      ) {
+      supportUsers = dblow.getState().supportUsers;
+      if (supportUsers === undefined) {
         return false;
       }
-      usersArray.map(userToDelete => {
-        configs["supportUsers"] = configs["supportUsers"].filter(
-          supportUser => supportUser !== userToDelete,
-        );
-      });
-      dblow.set("configs", configs).write();
+      supportUsers = supportUsers.filter(
+        supportUser => supportUser !== user,
+      );
+      dblow.set("supportUsers", supportUsers).write();
       const savedSupportUsers = this.getSupportUsers();
       if (savedSupportUsers === false) return false;
       return savedSupportUsers;
@@ -87,7 +77,9 @@ class Db {
 		let configs;
 		try {
 			dblow.read();
-			configs = dblow.getState().configs;
+      configs = dblow.getState().configs;
+      console.log("dblow.getState(): ", dblow.getState());
+      console.log("dblow.getState().configs: ", dblow.getState().configs);
 			if (configs === undefined) {
 				dblow.set("configs", []).write();
 				configs = [];

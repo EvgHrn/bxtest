@@ -167,8 +167,8 @@ app.use(async (req, res, next) => {
               ],
               req.body["auth"],
             );
-					} else if(command["COMMAND"] === "deletesupportusers") {
-						console.log("Got command deletesupportusers");
+					} else if(command["COMMAND"] === "deletesupportuser") {
+						console.log("Got command deletesupportuser");
 						const idToDelete = command["COMMAND_PARAMS"];
             console.log("Gonna delete support user: ", idToDelete);
             const deleteUserResult = bitrix.deleteSupportUser(idToDelete);

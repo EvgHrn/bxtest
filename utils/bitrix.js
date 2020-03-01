@@ -11,7 +11,7 @@ class Bitrix {
 		this.supportUsers = Db.getSupportUsers();
 		if (!this.supportUsers) {
 			this.supportUsers = ["1819"]; 
-			Db.addSupportUsers(["1819"]);
+			Db.addSupportUser("1819");
 		}
     this.configs = Db.getConfigs();
   }
@@ -26,7 +26,7 @@ class Bitrix {
   };
 
   addSupportUser = userIdStr => {
-    const result = Db.addSupportUser([userIdStr]);
+    const result = Db.addSupportUser(userIdStr);
     if (result) {
       //TODO send message with new support users
       this.supportUsers = result;
@@ -36,7 +36,7 @@ class Bitrix {
   };
 
   deleteSupportUser = userIdSrt => {
-    const result = Db.deleteSupportUsers([userIdStr]);
+    const result = Db.deleteSupportUser(userIdStr);
     if (result) {
       this.supportUsers = result;
       //TODO send message with new support users
@@ -118,7 +118,7 @@ class Bitrix {
       "imbot.command.register",
       {
         BOT_ID: botId,
-        COMMAND: "addsupportusers",
+        COMMAND: "addsupportuser",
         COMMON: "Y",
         HIDDEN: "N",
         EXTRANET_SUPPORT: "N",
@@ -134,13 +134,13 @@ class Bitrix {
       auth,
     );
 
-    const commandAddSupportUsers = result["result"];
+    const commandAddSupportUser = result["result"];
 
     result = await this.restCommand(
       "imbot.command.register",
       {
         BOT_ID: botId,
-        COMMAND: "deletesupportusers",
+        COMMAND: "deletesupportuser",
         COMMON: "Y",
         HIDDEN: "N",
         EXTRANET_SUPPORT: "N",
@@ -156,24 +156,24 @@ class Bitrix {
       auth,
     );
 
-    const commandDeleteSupportUsers = result["result"];
+    const commandDeleteSupportUser = result["result"];
 
     // save params
     let newConfig = {};
     newConfig[token] = {
       BOT_ID: botId,
       COMMAND_MASSSEND: commandMassSend,
-      COMMAND_ADDSUPPORTUSERS: commandAddSupportUsers,
-      COMMAND_DELETESUPPORTUSERS: commandDeleteSupportUsers,
+      COMMAND_ADDSUPPORTUSER: commandAddSupportUser,
+      COMMAND_DELETESUPPORTUSER: commandDeleteSupportUser,
       AUTH: auth,
     };
     Db.saveConfig(newConfig);
   };
 
-  checkAuth = token => {
-    return Db.getConfigs().find(configObj =>
-      Object.keys(configObj).includes(token),
-    );
+	checkAuth = token => {
+		const configs = Db.getConfigs();
+		console.log("Got new configs: ", configs);
+    return configs.find(configObj => Object.keys(configObj).includes(token));
   };
 
   searchUsersByDepartment = async (departmentToSearch, auth) => {
