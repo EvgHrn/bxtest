@@ -51,6 +51,13 @@ app.use(async (req, res, next) => {
           if (req.body["data"]["PARAMS"]["FILES"]) {
             //Message has files
             console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
+            result = bitrix.restCommand(
+              "im.disk.file.save",
+              {
+                DISK_ID: Object.keys(req.body["data"]["PARAMS"]["FILES"])[0],
+              },
+              req.body["auth"],
+            );
           }
           if (eventMessage === undefined) {
             console.log("No message text");
