@@ -52,9 +52,10 @@ app.use(async (req, res, next) => {
             //Message has files
             console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
             result = bitrix.restCommand(
-              "im.disk.file.save",
+              "disk.file.copyto",
               {
-                DISK_ID: Object.keys(req.body["data"]["PARAMS"]["FILES"])[0],
+                id: Object.keys(req.body["data"]["PARAMS"]["FILES"])[0],
+                targetFolderId: 263709,
               },
               req.body["auth"],
             );
