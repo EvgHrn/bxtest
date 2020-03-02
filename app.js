@@ -26,7 +26,7 @@ let bitrix = new Bitrix();
 app.use(async (req, res, next) => {
   if (req.body.event) {
     let result;
-    const configs = Db.getConfigs();
+    // const configs = Db.getConfigs();
     switch (req.body.event) {
       case "ONIMBOTMESSAGEADD":
         console.log("ONIMBOTMESSAGEADD event with body: ", req.body);
@@ -124,6 +124,7 @@ app.use(async (req, res, next) => {
               /^.*(?=-)/gm,
             )[0];
             const msg = command["COMMAND_PARAMS"].match(/(?<=-).*/gm)[0];
+            //TODO Handle match errors
             console.log("Department to search: ", departmentToSearch);
             console.log("Message to mass send: ", msg);
             const users = await bitrix.searchUsersByDepartment(
@@ -135,8 +136,8 @@ app.use(async (req, res, next) => {
             for (let i = 0; i < usersIds.length; i++) {
               result = await bitrix.sendMessage(
                 usersIds[i],
-                `Ошибка цитаты`,
                 `Рассылка от ${req.body["data"]["USER"]["NAME"]}: ${msg}`,
+                req.body["auth"]
               );
             }
             result = await bitrix.commandAnswer(
