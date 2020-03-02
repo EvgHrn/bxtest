@@ -50,6 +50,7 @@ app.use(async (req, res, next) => {
           console.log("Message from common user: ", eventMessage);
           for (let i = 0; i < supportUsers.length; i++) {
             if (supportUsers[i] === null) continue;
+            console.log(`Sending message from common user to ${supportUsers[i]}`);
             result = await bitrix.sendMessage(
               supportUsers[i],
               `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${eventMessage}`,
@@ -62,11 +63,11 @@ app.use(async (req, res, next) => {
           //Message from support group
           console.log("Message from support group");
           const eventMessage = req.body["data"]["PARAMS"]["MESSAGE"];
-          const toUserId = eventMessage.match(/(?<=id)\d*/gm);
-          console.log("Find user id for response: ", toUserId[0]);
+          const toUserId = eventMessage.match(/(?<=id)\d*/gm)[0];
+          console.log("Find user id for response: ", toUserId);
           //Answer to user
           result = await bitrix.sendMessage(
-            toUserId[0],
+            toUserId,
             `${req.body["data"]["USER"]["NAME"]}: ${eventMessage}`,
             req.body["auth"]
           );
@@ -76,7 +77,7 @@ app.use(async (req, res, next) => {
             if (supportUsers[i] === req.body["data"]["USER"]["ID"]) continue;
             console.log("Duplicate Answer to ", supportUsers[i]);
             result = await bitrix.sendMessage(
-              req.body["data"]["PARAMS"]["DIALOG_ID"],
+              supportUsers[i],
               `${req.body["data"]["USER"]["NAME"]}: ${eventMessage}`,
               req.body["auth"]
             );

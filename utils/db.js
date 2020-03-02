@@ -79,7 +79,7 @@ class Db {
 			dblow.read();
       configs = dblow.getState().configs;
       console.log("dblow.getState(): ", dblow.getState());
-      console.log("dblow.getState().configs: ", dblow.getState().configs);
+      // console.log("dblow.getState().configs: ", dblow.getState().configs);
 			if (configs === undefined) {
 				dblow.set("configs", []).write();
 				configs = [];
