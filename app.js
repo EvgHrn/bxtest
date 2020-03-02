@@ -50,17 +50,23 @@ app.use(async (req, res, next) => {
           console.log("Message from common user: ", eventMessage);
           if (req.body["data"]["PARAMS"]["FILES"]) {
             //Message has files
-            console.log(`There are files in message: ${req.body["data"]["PARAMS"]["FILES"]}`);
+            console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
           }
-          for (let i = 0; i < supportUsers.length; i++) {
-            if (supportUsers[i] === null) continue;
-            console.log(`Sending message from common user to ${supportUsers[i]}`);
-            result = await bitrix.sendMessage(
-              supportUsers[i],
-              `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${eventMessage}`,
-              req.body["auth"]
-            );
+          if (eventMessage === undefined) {
+            console.log("No message text");
+            return;
           }
+            for (let i = 0; i < supportUsers.length; i++) {
+              if (supportUsers[i] === null) continue;
+              console.log(
+                `Sending message from common user to ${supportUsers[i]}`,
+              );
+              result = await bitrix.sendMessage(
+                supportUsers[i],
+                `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${eventMessage}`,
+                req.body["auth"],
+              );
+            }
         } else if (
           req.body["data"]["PARAMS"]["MESSAGE"].match(/(?<=id)\d*/gm)
         ) {
