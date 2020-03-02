@@ -48,6 +48,9 @@ app.use(async (req, res, next) => {
         if (!supportUsers.includes(req.body["data"]["PARAMS"]["FROM_USER_ID"])) {
           //Message from common user
           console.log("Message from common user: ", eventMessage);
+          if(req.body["data"]["PARAMS"]["FILES"]) {
+            console.log(`There are files in message: ${req.body["data"]["PARAMS"]["FILES"]}`);
+          }
           for (let i = 0; i < supportUsers.length; i++) {
             if (supportUsers[i] === null) continue;
             console.log(`Sending message from common user to ${supportUsers[i]}`);
