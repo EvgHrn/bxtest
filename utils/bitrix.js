@@ -62,22 +62,6 @@ class Bitrix {
     }
   };
 
-  sendFile = async (chatId, uploadId, auth) => {
-    const result = await this.restCommand(
-      "im.disk.file.commit",
-      {
-        CHAT_ID: chatId,
-        UPLOAD_ID: uploadId,
-      },
-      auth,
-    );
-    if (result) {
-      console.log("Sending file result: ", result);
-    } else {
-      console.log("Sending file error");
-    }
-  };
-
   registerBotAndCommands = async (token, auth) => {
     let result = await this.restCommand(
       "imbot.register",

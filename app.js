@@ -76,19 +76,11 @@ app.use(async (req, res, next) => {
             }
             if (req.body["data"]["PARAMS"]["FILES"]) {
               //Message has files
-              console.log("Send file to ", supportUsers[i]);
-              const filesKeys = Object.keys(req.body["data"]["PARAMS"]["FILES"]);
-              for (
-                let i = 0;
-                i < filesKeys.length;
-                i++
-              ) {
-                result = await bitrix.sendFile(
-                  supportUsers[i],
-                  req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"],
-                  req.body["auth"],
-                );
-              }
+              result = await bitrix.sendMessage(
+                req.body["data"]["USER"]["ID"],
+                `Отправка файлов не работает. Ваше сообщение не отправлено`,
+                req.body["auth"],
+              );
             }
           }
         } else if (
