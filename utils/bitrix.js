@@ -8,11 +8,11 @@ class Bitrix {
   constructor() {
     // const supportGroup = ["1819", "1600", "3", "1480", "1588"];
     // const supportGroup = ["1819"];
-		this.supportUsers = Db.getSupportUsers();
-		if (!this.supportUsers) {
-			this.supportUsers = ["1819"]; 
-			Db.addSupportUser("1819");
-		}
+    this.supportUsers = Db.getSupportUsers();
+    if (!this.supportUsers) {
+      this.supportUsers = ["1819"];
+      Db.addSupportUser("1819");
+    }
     this.configs = Db.getConfigs();
   }
 
@@ -45,20 +45,13 @@ class Bitrix {
     }
   };
 
-  sendMessage = async (userId, msg, auth) => {
-    // const result = await restCommand(
-    //   "imbot.message.add",
-    //   {
-    //     DIALOG_ID: toUserId[0],
-    //     MESSAGE: `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${req.body["data"]["PARAMS"]["MESSAGE"]}`,
-    //   },
-    //   req.body["auth"],
-    // );
+  sendMessage = async (userId, msg, auth, attach = []) => {
     const result = await this.restCommand(
       "imbot.message.add",
       {
         DIALOG_ID: userId,
         MESSAGE: msg,
+        ATTACH: attach,
       },
       auth,
     );
@@ -66,6 +59,22 @@ class Bitrix {
       console.log("Sending message result: ", result);
     } else {
       console.log("Sending message error");
+    }
+  };
+
+  sendFile = async (chatId, uploadId, auth) => {
+    const result = await this.restCommand(
+      "im.disk.file.commit",
+      {
+        CHAT_ID: chatId,
+        UPLOAD_ID: uploadId,
+      },
+      auth,
+    );
+    if (result) {
+      console.log("Sending file result: ", result);
+    } else {
+      console.log("Sending file error");
     }
   };
 
@@ -170,9 +179,9 @@ class Bitrix {
     Db.saveConfig(newConfig);
   };
 
-	checkAuth = token => {
-		const configs = Db.getConfigs();
-		console.log("Got new configs: ", configs);
+  checkAuth = token => {
+    const configs = Db.getConfigs();
+    console.log("Got new configs: ", configs);
     return configs.find(configObj => Object.keys(configObj).includes(token));
   };
 
@@ -184,10 +193,10 @@ class Bitrix {
       auth,
     );
     return result.result;
-	};
-	
-	commandAnswer = async (commandId, commandMsg, msg, attach, auth) => {
-		const result = await this.restCommand(
+  };
+
+  commandAnswer = async (commandId, commandMsg, msg, attach, auth) => {
+    const result = await this.restCommand(
       "imbot.command.answer",
       {
         COMMAND_ID: commandId,
@@ -195,10 +204,10 @@ class Bitrix {
         MESSAGE: msg,
         ATTACH: attach,
       },
-      auth
+      auth,
     );
-		return result;
-	}
+    return result;
+  };
 
   restCommand = async (method, params = {}, auth = {}, authRefresh = true) => {
     const queryUrl = `${auth["client_endpoint"]}${method}`;

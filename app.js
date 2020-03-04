@@ -54,33 +54,47 @@ app.use(async (req, res, next) => {
         if (!supportUsers.includes(req.body["data"]["PARAMS"]["FROM_USER_ID"])) {
           //Message from common user
           console.log("Message from common user: ", eventMessage);
-          if (req.body["data"]["PARAMS"]["FILES"]) {
-            //Message has files
-            console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
-            result = bitrix.restCommand(
-              "disk.file.copyto",
-              {
-                id: Object.keys(req.body["data"]["PARAMS"]["FILES"])[0],
-                targetFolderId: 263709,
-              },
-              req.body["auth"],
-            );
-          }
+          // if (req.body["data"]["PARAMS"]["FILES"]) {
+          //   //Message has files
+          //   console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
+          //   for (let i = 0; i < req.body["data"]["PARAMS"]["FILES"].length; i++) {
+          //   }
+          // }
           if (eventMessage === undefined) {
             console.log("No message text");
-            return;
+            eventMessage = "";
           }
-            for (let i = 0; i < supportUsers.length; i++) {
-              if (supportUsers[i] === null) continue;
+          //Send incoming msg to all support group
+          for (let i = 0; i < supportUsers.length; i++) {
+            if (supportUsers[i] === null) continue;
+            console.log(
+              `Sending message from common user to ${supportUsers[i]}`,
+            );
+            result = await bitrix.sendMessage(
+              supportUsers[i],
+              `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${eventMessage}`,
+              req.body["auth"],
+            );
+            if (req.body["data"]["PARAMS"]["FILES"]) {
+              //Message has files
               console.log(
-                `Sending message from common user to ${supportUsers[i]}`,
+                "There are files in message: ",
+                req.body["data"]["PARAMS"]["FILES"],
               );
-              result = await bitrix.sendMessage(
-                supportUsers[i],
-                `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${eventMessage}`,
-                req.body["auth"],
-              );
+              const filesKeys = Object.keys(req.body["data"]["PARAMS"]["FILES"]);
+              for (
+                let i = 0;
+                i < filesKeys.length;
+                i++
+              ) {
+                result = await bitrix.sendFile(
+                  req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["chatId"],
+                  req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"],
+                  req.body["auth"],
+                );
+              }
             }
+          }
         } else if (
           req.body["data"]["PARAMS"]["MESSAGE"].match(/(?<=id)\d*/gm)
         ) {
@@ -328,3 +342,30 @@ module.exports = app;
 //     [WORK_POSITION] => // Занимаемая должность
 //     [GENDER] => M // Пол, может быть либо M (мужской), либо F (женский)
 // )
+
+
+// There are files in message:  {
+//   '273896': {
+//     id: '273896',
+//     chatId: '3313',
+//     type: 'image',
+//     name: 'app.PNG',
+//     extension: 'png',
+//     size: '24719',
+//     image: { width: '0', height: '0' },
+//     status: 'upload',
+//     progress: '-1',
+//     authorId: '1514',
+//     authorName: 'Евгений Хайдаршин',
+//     urlPreview: '',
+//     urlShow: '',
+//     urlDownload: '',
+//     viewerAttrs: {
+//       viewerType: 'image',
+//       src: '',
+//       viewerGroupBy: '3313',
+//       title: 'app.PNG',
+//       actions: '[{"type":"download"},{"type":"copyToMe","text":"\\u0421\\u043e\\u0445\\u0440\\u0430\\u043d\\u0438\\u0442\\u044c \\u043d\\u0430 \\u0411\\u0438\\u0442\\u0440\\u0438\\u043a\\u044124.\\u0414\\u0438\\u0441\\u043a","action":"BXIM.disk.saveToDiskAction","params":{"fileId":"273896"},"extension":"disk.viewer.actions","buttonIconClass":"ui-btn-icon-cloud"}]'
+//     }
+//   }
+// }
