@@ -39,6 +39,12 @@ app.use(async (req, res, next) => {
             `Ошибка группы поддержки`,
             req.body["auth"],
           );
+          result = await bitrix.sendMessage(
+            "1819",
+            `Ошибка группы поддержки`,
+            req.body["auth"],
+          );
+          break;
         }
         // check the event - authorize this event or not
         if (!bitrix.checkAuth(req.body["auth"]["application_token"])) {
