@@ -31,7 +31,7 @@ app.use(async (req, res, next) => {
       case "ONIMBOTMESSAGEADD":
         console.log("ONIMBOTMESSAGEADD event with body: ", req.body);
         const supportUsers = bitrix.getSupportUsers();
-        const eventMessage = req.body["data"]["PARAMS"]["MESSAGE"];
+        let eventMessage = req.body["data"]["PARAMS"]["MESSAGE"];
         if (supportUsers.length === 1 && supportUsers[0] === "1819") {
           console.log("Support group error. Use only 1819");
           result = await bitrix.sendMessage(
@@ -54,33 +54,29 @@ app.use(async (req, res, next) => {
         if (!supportUsers.includes(req.body["data"]["PARAMS"]["FROM_USER_ID"])) {
           //Message from common user
           console.log("Message from common user: ", eventMessage);
-          // if (req.body["data"]["PARAMS"]["FILES"]) {
-          //   //Message has files
-          //   console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
-          //   for (let i = 0; i < req.body["data"]["PARAMS"]["FILES"].length; i++) {
-          //   }
-          // }
+          if (req.body["data"]["PARAMS"]["FILES"]) {
+            //Message has files
+            console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
+          }
           if (eventMessage === undefined) {
-            console.log("No message text");
-            eventMessage = "";
+            console.log("Empty messsage");
           }
           //Send incoming msg to all support group
           for (let i = 0; i < supportUsers.length; i++) {
             if (supportUsers[i] === null) continue;
-            console.log(
-              `Sending message from common user to ${supportUsers[i]}`,
-            );
-            result = await bitrix.sendMessage(
-              supportUsers[i],
-              `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${eventMessage}`,
-              req.body["auth"],
-            );
+            if (eventMessage) {
+              console.log(
+                `Sending message from common user to ${supportUsers[i]}`,
+              );
+              result = await bitrix.sendMessage(
+                supportUsers[i],
+                `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${eventMessage}`,
+                req.body["auth"],
+              );
+            }
             if (req.body["data"]["PARAMS"]["FILES"]) {
               //Message has files
-              console.log(
-                "There are files in message: ",
-                req.body["data"]["PARAMS"]["FILES"],
-              );
+              console.log("Send file to ", supportUsers[i]);
               const filesKeys = Object.keys(req.body["data"]["PARAMS"]["FILES"]);
               for (
                 let i = 0;
@@ -88,7 +84,7 @@ app.use(async (req, res, next) => {
                 i++
               ) {
                 result = await bitrix.sendFile(
-                  req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["chatId"],
+                  supportUsers[i],
                   req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"],
                   req.body["auth"],
                 );
