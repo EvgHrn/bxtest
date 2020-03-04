@@ -57,6 +57,12 @@ app.use(async (req, res, next) => {
           if (req.body["data"]["PARAMS"]["FILES"]) {
             //Message has files
             console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
+            result = await bitrix.sendMessage(
+              req.body["data"]["USER"]["ID"],
+              `Отправка файлов не работает. Ваше сообщение не отправлено`,
+              req.body["auth"],
+            );
+            break;
           }
           if (eventMessage === undefined) {
             console.log("Empty messsage");
@@ -71,14 +77,6 @@ app.use(async (req, res, next) => {
               result = await bitrix.sendMessage(
                 supportUsers[i],
                 `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${eventMessage}`,
-                req.body["auth"],
-              );
-            }
-            if (req.body["data"]["PARAMS"]["FILES"]) {
-              //Message has files
-              result = await bitrix.sendMessage(
-                req.body["data"]["USER"]["ID"],
-                `Отправка файлов не работает. Ваше сообщение не отправлено`,
                 req.body["auth"],
               );
             }
