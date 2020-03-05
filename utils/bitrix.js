@@ -62,14 +62,15 @@ class Bitrix {
     }
   };
 
-  getFileUrl = (fileId, auth) => {
-    return await this.restCommand(
+  getFileUrl = async (fileId, auth) => {
+    const result = await this.restCommand(
       "disk.file.get",
       {
         id: fileId
       },
       auth
-    )["result"]["DETAIL_URL"];
+    );
+    return result["result"]["DETAIL_URL"];
   };
 
   registerBotAndCommands = async (token, auth) => {
@@ -209,6 +210,7 @@ class Bitrix {
       ...params,
       auth: auth["access_token"]
     });
+    console.log("restCommand url: ", `${queryUrl}/?${queryData}`);
 
     let result;
     try {

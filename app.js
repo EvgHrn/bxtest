@@ -58,9 +58,10 @@ app.use(async (req, res, next) => {
             //Message has files
             console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
             const filesKeys = Object.keys(req.body["data"]["PARAMS"]["FILES"]);
+            console.log("filesKeys: ", filesKeys);
             let attach = [];
             for(let i = 0; i < filesKeys.length; i++) {
-              const fileUrl = bitrix.getFileUrl( req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"] );
+              const fileUrl = await bitrix.getFileUrl( req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"],  req.body["auth"]);
               const fileName = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["name"];
               const fileSize = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["size"];
               console.log("File url: ", fileUrl);
