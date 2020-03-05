@@ -68,14 +68,12 @@ app.use(async (req, res, next) => {
               console.log("File url: ", fileUrl);
               console.log("File name: ", fileName);
               console.log("File size: ", fileSize);
-              attach.push(
-                {
-                  FILE: {
-                    NAME: fileName,
-                    LINK: fileUrl,
-                    SIZE: fileSize,
-                  }
-                }   
+              attach.push({ FILE: {
+                              NAME: fileName,
+                              LINK: fileUrl,
+                              SIZE: fileSize,
+                            }
+                          }   
               );
             }
           }
@@ -98,19 +96,52 @@ app.use(async (req, res, next) => {
               attach
             );
           }
-        } else if (
-          req.body["data"]["PARAMS"]["MESSAGE"].match(/(?<=id)\d*/gm)
-        ) {
+        } else {
           //Message from support group
           console.log("Message from support group");
-          const eventMessage = req.body["data"]["PARAMS"]["MESSAGE"];
+          if (
+              !req.body["data"]["PARAMS"]["MESSAGE"].match(/(?<=id)\d*/gm)
+            ) {
+            //Quotation error
+            console.log(
+              "Quotation error in: ",
+              req.body["data"]["PARAMS"]["MESSAGE"],
+            );
+            result = await bitrix.sendMessage(
+              req.body["data"]["PARAMS"]["FROM_USER_ID"],
+              `Ошибка цитаты`,
+              req.body["auth"],
+            );
+          }
+          let attach = [];
+          if (req.body["data"]["PARAMS"]["FILES"]) {
+            //Message has files
+            console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
+            const filesKeys = Object.keys(req.body["data"]["PARAMS"]["FILES"]);
+            console.log("filesKeys: ", filesKeys);
+            //Attach files
+            for(let i = 0; i < filesKeys.length; i++) {
+              const fileUrl = await bitrix.getFileUrl( req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"],  req.body["auth"]);
+              const fileName = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["name"];
+              const fileSize = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["size"];
+              console.log("File url: ", fileUrl);
+              console.log("File name: ", fileName);
+              console.log("File size: ", fileSize);
+              attach.push({ FILE: { NAME: fileName, LINK: fileUrl, SIZE: fileSize, }});
+            }
+          }
+          let eventMessage = req.body["data"]["PARAMS"]["MESSAGE"];
+          if(!eventMessage) {
+            eventMessage = "";
+          }
           const toUserId = eventMessage.match(/(?<=id)\d*/gm)[0];
           console.log("Find user id for response: ", toUserId);
           //Answer to user
           result = await bitrix.sendMessage(
             toUserId,
             `${req.body["data"]["USER"]["NAME"]}: ${eventMessage}`,
-            req.body["auth"]
+            req.body["auth"],
+            attach
           );
           //Answer to other support
           for (let i = 0; i < supportUsers.length; i++) {
@@ -120,20 +151,10 @@ app.use(async (req, res, next) => {
             result = await bitrix.sendMessage(
               supportUsers[i],
               `${req.body["data"]["USER"]["NAME"]}: ${eventMessage}`,
-              req.body["auth"]
+              req.body["auth"],
+              attach
             );
           }
-        } else {
-          //Quotation error
-          console.log(
-            "Quotation error in: ",
-            req.body["data"]["PARAMS"]["MESSAGE"],
-          );
-          result = await bitrix.sendMessage(
-            req.body["data"]["PARAMS"]["FROM_USER_ID"],
-            `Ошибка цитаты`,
-            req.body["auth"],
-          );
         }
         // write debug log
         // writeToLog($result, 'ImBot Event message add');
