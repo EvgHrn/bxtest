@@ -51,15 +51,25 @@ class Bitrix {
       {
         DIALOG_ID: userId,
         MESSAGE: msg,
-        ATTACH: attach,
+        ATTACH: attach
       },
-      auth,
+      auth
     );
     if (result) {
       console.log("Sending message result: ", result);
     } else {
       console.log("Sending message error");
     }
+  };
+
+  getFileUrl = (fileId, auth) => {
+    return await this.restCommand(
+      "disk.file.get",
+      {
+        id: fileId
+      },
+      auth
+    )["result"]["DETAIL_URL"];
   };
 
   registerBotAndCommands = async (token, auth) => {
@@ -78,11 +88,11 @@ class Bitrix {
           PERSONAL_BIRTHDAY: "2020-02-26",
           WORK_POSITION: "Вопросы производству",
           PERSONAL_WWW: "http://bitrix24.com",
-          PERSONAL_GENDER: "M",
+          PERSONAL_GENDER: "M"
           // "PERSONAL_PHOTO": avatar,
-        },
+        }
       },
-      auth,
+      auth
     );
     const botId = result["result"];
     result = await this.restCommand(
@@ -98,12 +108,12 @@ class Bitrix {
             LANGUAGE_ID: "ru",
             TITLE:
               "Рассылка подразделению. Нельзя использовать тире в сообщении и названии подразделения",
-            PARAMS: "Подразделение-Сообщение",
-          },
+            PARAMS: "Подразделение-Сообщение"
+          }
         ],
-        EVENT_COMMAND_ADD: process.env.SERVER_HOST,
+        EVENT_COMMAND_ADD: process.env.SERVER_HOST
       },
-      auth,
+      auth
     );
     const commandMassSend = result["result"];
 
@@ -119,12 +129,12 @@ class Bitrix {
           {
             LANGUAGE_ID: "ru",
             TITLE: "Добавить пользователя в группу поддержки",
-            PARAMS: "id пользователя",
-          },
+            PARAMS: "id пользователя"
+          }
         ],
-        EVENT_COMMAND_ADD: process.env.SERVER_HOST,
+        EVENT_COMMAND_ADD: process.env.SERVER_HOST
       },
-      auth,
+      auth
     );
 
     const commandAddSupportUser = result["result"];
@@ -141,12 +151,12 @@ class Bitrix {
           {
             LANGUAGE_ID: "ru",
             TITLE: "Удалить пользователя из группы поддержки",
-            PARAMS: "id пользователя",
-          },
+            PARAMS: "id пользователя"
+          }
         ],
-        EVENT_COMMAND_ADD: process.env.SERVER_HOST,
+        EVENT_COMMAND_ADD: process.env.SERVER_HOST
       },
-      auth,
+      auth
     );
 
     const commandDeleteSupportUser = result["result"];
@@ -158,7 +168,7 @@ class Bitrix {
       COMMAND_MASSSEND: commandMassSend,
       COMMAND_ADDSUPPORTUSER: commandAddSupportUser,
       COMMAND_DELETESUPPORTUSER: commandDeleteSupportUser,
-      AUTH: auth,
+      AUTH: auth
     };
     Db.saveConfig(newConfig);
   };
@@ -174,7 +184,7 @@ class Bitrix {
     result = await this.restCommand(
       "im.search.user.list",
       { FIND: departmentToSearch },
-      auth,
+      auth
     );
     return result.result;
   };
@@ -186,9 +196,9 @@ class Bitrix {
         COMMAND_ID: commandId,
         MESSAGE_ID: commandMsg,
         MESSAGE: msg,
-        ATTACH: attach,
+        ATTACH: attach
       },
-      auth,
+      auth
     );
     return result;
   };
@@ -197,7 +207,7 @@ class Bitrix {
     const queryUrl = `${auth["client_endpoint"]}${method}`;
     const queryData = querystring.stringify({
       ...params,
-      auth: auth["access_token"],
+      auth: auth["access_token"]
     });
 
     let result;
@@ -241,7 +251,7 @@ class Bitrix {
       grant_type: "refresh_token",
       client_id: process.env.BITRIX_CLIENT_ID,
       client_secret: process.env.BITRIX_CLIENT_SECRET,
-      refresh_token: auth["refresh_token"],
+      refresh_token: auth["refresh_token"]
     });
 
     let result;

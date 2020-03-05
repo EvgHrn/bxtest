@@ -57,10 +57,28 @@ app.use(async (req, res, next) => {
           if (req.body["data"]["PARAMS"]["FILES"]) {
             //Message has files
             console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
+            const filesKeys = Object.keys(req.body["data"]["PARAMS"]["FILES"]);
+            let attach = [];
+            for(let i = 0; i < filesKeys.length; i++) {
+              const fileUrl = bitrix.getFileUrl( req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"] );
+              const fileName = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["name"];
+              const fileSize = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["size"];
+              console.log("File url: ", fileUrl);
+              attach.push(
+                {
+                  FILE: {
+                    NAME: fileName,
+                    LINK: fileUrl,
+                    SIZE: fileSize,
+                  }
+                }   
+              );
+            }
             result = await bitrix.sendMessage(
               req.body["data"]["USER"]["ID"],
               `Отправка файлов не работает. Ваше сообщение не отправлено`,
               req.body["auth"],
+              attach
             );
             break;
           }
