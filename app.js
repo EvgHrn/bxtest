@@ -113,22 +113,15 @@ app.use(async (req, res, next) => {
               req.body["auth"],
             );
           }
-          let attach = [];
           if (req.body["data"]["PARAMS"]["FILES"]) {
             //Message has files
-            console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
-            const filesKeys = Object.keys(req.body["data"]["PARAMS"]["FILES"]);
-            console.log("filesKeys: ", filesKeys);
-            //Attach files
-            for(let i = 0; i < filesKeys.length; i++) {
-              const fileUrl = await bitrix.getFileUrl( req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"],  req.body["auth"]);
-              const fileName = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["name"];
-              const fileSize = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["size"];
-              console.log("File url: ", fileUrl);
-              console.log("File name: ", fileName);
-              console.log("File size: ", fileSize);
-              attach.push({ FILE: { NAME: fileName, LINK: fileUrl, SIZE: fileSize, }});
-            }
+            console.log("There are files in message from support so error");
+            result = await bitrix.sendMessage(
+              req.body["data"]["USER"]["ID"],
+              `Отправка файлов у вас не работает. Сообщение не отправлено`,
+              req.body["auth"],
+            );
+            break;
           }
           let eventMessage = req.body["data"]["PARAMS"]["MESSAGE"];
           if(!eventMessage) {
@@ -140,8 +133,7 @@ app.use(async (req, res, next) => {
           result = await bitrix.sendMessage(
             toUserId,
             `${req.body["data"]["USER"]["NAME"]}: ${eventMessage}`,
-            req.body["auth"],
-            attach
+            req.body["auth"]
           );
           //Answer to other support
           for (let i = 0; i < supportUsers.length; i++) {
@@ -151,8 +143,7 @@ app.use(async (req, res, next) => {
             result = await bitrix.sendMessage(
               supportUsers[i],
               `${req.body["data"]["USER"]["NAME"]}: ${eventMessage}`,
-              req.body["auth"],
-              attach
+              req.body["auth"]
             );
           }
         }
