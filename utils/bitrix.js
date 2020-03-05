@@ -70,7 +70,7 @@ class Bitrix {
       },
       auth
     );
-    return result["result"]["DETAIL_URL"];
+    return result["result"]["DOWNLOAD_URL"];
   };
 
   registerBotAndCommands = async (token, auth) => {
