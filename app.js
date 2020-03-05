@@ -54,12 +54,12 @@ app.use(async (req, res, next) => {
         if (!supportUsers.includes(req.body["data"]["PARAMS"]["FROM_USER_ID"])) {
           //Message from common user
           console.log("Message from common user: ", eventMessage);
+          let attach = [];
           if (req.body["data"]["PARAMS"]["FILES"]) {
             //Message has files
             console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
             const filesKeys = Object.keys(req.body["data"]["PARAMS"]["FILES"]);
             console.log("filesKeys: ", filesKeys);
-            let attach = [];
             for(let i = 0; i < filesKeys.length; i++) {
               const fileUrl = await bitrix.getFileUrl( req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"],  req.body["auth"]);
               const fileName = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["name"];
@@ -75,13 +75,13 @@ app.use(async (req, res, next) => {
                 }   
               );
             }
-            result = await bitrix.sendMessage(
-              req.body["data"]["USER"]["ID"],
-              `Отправка файлов не работает. Ваше сообщение не отправлено`,
-              req.body["auth"],
-              attach
-            );
-            break;
+            // result = await bitrix.sendMessage(
+            //   req.body["data"]["USER"]["ID"],
+            //   `Отправка файлов не работает. Ваше сообщение не отправлено`,
+            //   req.body["auth"],
+            //   attach
+            // );
+            // break;
           }
           if (eventMessage === undefined) {
             console.log("Empty messsage");
@@ -97,6 +97,7 @@ app.use(async (req, res, next) => {
                 supportUsers[i],
                 `${req.body["data"]["USER"]["NAME"]} id${req.body["data"]["USER"]["ID"]}: ${eventMessage}`,
                 req.body["auth"],
+                attach
               );
             }
           }
