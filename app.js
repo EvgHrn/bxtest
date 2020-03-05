@@ -99,6 +99,16 @@ app.use(async (req, res, next) => {
         } else {
           //Message from support group
           console.log("Message from support group");
+          if (req.body["data"]["PARAMS"]["FILES"]) {
+            //Message has files
+            console.log("There are files in message from support so error");
+            result = await bitrix.sendMessage(
+              req.body["data"]["USER"]["ID"],
+              `Отправка файлов у вас не работает. Сообщение не отправлено`,
+              req.body["auth"],
+            );
+            break;
+          }
           if (
               !req.body["data"]["PARAMS"]["MESSAGE"].match(/(?<=id)\d*/gm)
             ) {
@@ -113,16 +123,7 @@ app.use(async (req, res, next) => {
               req.body["auth"],
             );
           }
-          if (req.body["data"]["PARAMS"]["FILES"]) {
-            //Message has files
-            console.log("There are files in message from support so error");
-            result = await bitrix.sendMessage(
-              req.body["data"]["USER"]["ID"],
-              `Отправка файлов у вас не работает. Сообщение не отправлено`,
-              req.body["auth"],
-            );
-            break;
-          }
+          
           let eventMessage = req.body["data"]["PARAMS"]["MESSAGE"];
           if(!eventMessage) {
             eventMessage = "";
