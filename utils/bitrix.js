@@ -112,7 +112,7 @@ class Bitrix {
         }
         count++;
         await sleep(SAVE_CHECK_DELAY_MS);
-        isFullFile = await this.isFileUploaded(fileInfoObj["FILE_ID"], auth);
+        isFullFile = await this.isFileUploaded(fileInfoObj["ID"], auth);
       }
       //File uploaded
       acc.push(fileInfoObj);
