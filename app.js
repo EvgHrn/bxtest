@@ -54,28 +54,27 @@ app.use(async (req, res, next) => {
         if (!supportUsers.includes(req.body["data"]["PARAMS"]["FROM_USER_ID"])) {
           //Message from common user
           console.log("Message from common user: ", eventMessage);
-          let attach = [];
+          let attach;
           if (req.body["data"]["PARAMS"]["FILES"]) {
             //Message has files
             console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
-            const filesKeys = Object.keys(req.body["data"]["PARAMS"]["FILES"]);
-            console.log("filesKeys: ", filesKeys);
+            const filesObjectsArr = await bitrix.saveFiles(req.body["data"]["PARAMS"]["FILES"], process.env.CHAT_FOLDER_ID, req.body["auth"]);
+            if(!filesObjectsArr) {
+              console.log("Files saving error");
+              break;
+            }
             //Attach files
-            for(let i = 0; i < filesKeys.length; i++) {
-              const fileUrl = await bitrix.getFileUrl( req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"],  req.body["auth"]);
-              const fileName = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["name"];
-              const fileSize = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["size"];
+            attach = filesObjectsArr.reduce(async (acc, fileObj) => {
+              const fileUrl = fileObj["DETAIL_URL"];
+              const fileName = fileObj["NAME"];
               console.log("File url: ", fileUrl);
               console.log("File name: ", fileName);
-              console.log("File size: ", fileSize);
-              attach.push({ FILE: {
-                              NAME: fileName,
-                              LINK: fileUrl,
-                              SIZE: fileSize,
-                            }
-                          }   
-              );
-            }
+              acc.push({ FILE: {
+                  NAME: fileName,
+                  LINK: fileUrl
+                }
+              });
+            }, []);
           }
           if (eventMessage === undefined) {
             console.log("Empty messsage");

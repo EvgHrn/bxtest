@@ -73,6 +73,104 @@ class Bitrix {
     return result["result"]["DOWNLOAD_URL"];
   };
 
+  /**
+   *
+   * @param filesObj
+   * @param folderId
+   * @param auth
+   * @returns {Promise<boolean|[]>}
+   */
+  saveFiles = async (filesObj: Object, folderId: string, auth: Object) => {
+
+    const MAX_SAVE_TRIAL = 200;
+    const SAVE_CHECK_DELAY_MS = 3000;
+
+    let isError = false;
+
+    const filesInfoArr = Object.keys(filesObj).reduce(async (acc: Array, key) => {
+      const fileInfo = await this.copyFile(filesObj[key]["id"], folderId, auth);
+      if(!fileInfo)
+        isError = true;
+      acc.push(fileInfo);
+      return acc;
+    }, []);
+
+    if(isError)
+      return false;
+
+    let count = 0;
+
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    const filesObjectsArr = filesInfoArr.reduce(async (acc: Array, fileInfoObj: Object) => {
+      let isFullFile = false;
+      while(!isFullFile) {
+        //File do not uploaded yet
+        if(count > MAX_SAVE_TRIAL) {
+          isError = true;
+          return false;
+        }
+        count++;
+        await sleep(SAVE_CHECK_DELAY_MS);
+        isFullFile = await this.isFileUploaded(fileInfoObj["id"], auth);
+      }
+      //File uploaded
+      acc.push(fileInfoObj);
+    }, []);
+
+    if(isError)
+      return false;
+
+    return filesObjectsArr;
+  };
+
+  //return
+  // {
+  //   "ID": "10", //идентификатор
+  //   "NAME": "2511.jpg", //название файла
+  //   "CODE": null, //символьный код
+  //   "STORAGE_ID": "4", //идентификатор хранилища
+  //   "TYPE": "file",
+  //   "PARENT_ID": "8", //идентификатор родительской папки
+  //   "DELETED_TYPE": "0", //маркер удаления
+  //   "CREATE_TIME": "2015-04-24T10:41:51+03:00", //время создания
+  //   "UPDATE_TIME": "2015-04-24T15:52:43+03:00", //время изменения
+  //   "DELETE_TIME": null, //время перемещения в корзину
+  //   "CREATED_BY": "1", //идентификатор пользователя, который создал файл
+  //   "UPDATED_BY": "1", //идентификатор пользователя, который изменил файл
+  //   "DELETED_BY": "0", //идентификатор пользователя, который переместил в корзину файл
+  //   "DOWNLOAD_URL": "https://test.bitrix24.ru/disk/downloadFile/10/?&ncc=1&filename=2511.jpg&auth=******",
+  // //возвращает url для скачивания файла приложением
+  //   "DETAIL_URL": "https://test.bitrix24.ru/workgroups/group/3/disk/file/2511.jpg"
+  // //ссылка на страницу детальной информации о файле
+  // }
+  copyFile = async (fileId, desFolderId, auth) => {
+    const result = await this.restCommand(
+        "disk.file.copyto",
+        {
+          id: fileId,
+          targetFolderId: desFolderId,
+        },
+        auth
+    );
+    if("result" in result) {
+      return result["result"];
+    } else {
+      return false;
+    }
+  };
+
+  isFileUploaded = async (fileId, auth) => {
+    const result = await this.restCommand(
+        "disk.file.getVersions",
+        {
+          id: fileId
+        },
+        auth
+    );
+    return result["result"].some((fileObj) => fileObj["GLOBAL_CONTENT_VERSION"] > 1);
+  }
+
   registerBotAndCommands = async (token, auth) => {
     let result = await this.restCommand(
       "imbot.register",
