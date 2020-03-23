@@ -80,14 +80,14 @@ class Bitrix {
    * @param auth
    * @returns {Promise<boolean|[]>}
    */
-  saveFiles = async (filesObj: Object, folderId: string, auth: Object) => {
+  saveFiles = async (filesObj, folderId, auth) => {
 
     const MAX_SAVE_TRIAL = 200;
     const SAVE_CHECK_DELAY_MS = 3000;
 
     let isError = false;
 
-    const filesInfoArr = Object.keys(filesObj).reduce(async (acc: Array, key) => {
+    const filesInfoArr = Object.keys(filesObj).reduce(async (acc, key) => {
       const fileInfo = await this.copyFile(filesObj[key]["id"], folderId, auth);
       if(!fileInfo)
         isError = true;
@@ -102,7 +102,7 @@ class Bitrix {
 
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-    const filesObjectsArr = filesInfoArr.reduce(async (acc: Array, fileInfoObj: Object) => {
+    const filesObjectsArr = filesInfoArr.reduce(async (acc, fileInfoObj) => {
       let isFullFile = false;
       while(!isFullFile) {
         //File do not uploaded yet
