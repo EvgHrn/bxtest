@@ -172,8 +172,13 @@ class Bitrix {
         },
         auth
     );
-    return result["result"].some((fileObj) => fileObj["GLOBAL_CONTENT_VERSION"] > 1);
-  }
+    if("result" in result) {
+      return result["result"].some((fileObj) => fileObj["GLOBAL_CONTENT_VERSION"] > 1);
+    } else {
+      console.log("disk.file.getVersions ERROR: ", result);
+      return false;
+    }
+  };
 
   registerBotAndCommands = async (token, auth) => {
     let result = await this.restCommand(
