@@ -74,7 +74,6 @@ class Bitrix {
   };
 
   /**
-   *
    * @param filesObj
    * @param folderId
    * @param auth
@@ -91,7 +90,9 @@ class Bitrix {
 
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-    const filesObjectsArr = await Object.keys(filesObj).reduce(async (acc, key) => {
+    let filesObjectsArr = [];
+
+    for(const key of Object.keys(filesObj)) {
       let isFullFile = false;
       while(!isFullFile) {
         //File do not uploaded yet
@@ -106,19 +107,20 @@ class Bitrix {
       }
       //File uploaded
       console.log(`File ${filesObj[key]["name"]} uploaded`);
-      acc.push(filesObj[key]);
-    }, []);
+      filesObjectsArr.push(filesObj[key]);
+    }
 
     if(isError)
       return false;
 
-    const copiedFilesInfoArr = await filesObjectsArr.reduce(async (acc, fileObj) => {
+    let copiedFilesInfoArr = [];
+
+    for(const fileObj of filesObjectsArr) {
       const fileInfo = await this.copyFile(fileObj["id"], folderId, auth);
       if(!fileInfo)
         isError = true;
-      acc.push(fileInfo);
-      return acc;
-    }, []);
+      copiedFilesInfoArr.push(fileInfo);
+    }
 
     if(isError)
       return false;
