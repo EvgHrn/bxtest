@@ -95,6 +95,7 @@ class Bitrix {
       let isFullFile = false;
       while(!isFullFile) {
         //File do not uploaded yet
+        console.log(`File ${filesObj[key]["name"]} do not uploaded yet`);
         if(count > MAX_SAVE_TRIAL) {
           isError = true;
           return false;
@@ -104,6 +105,7 @@ class Bitrix {
         isFullFile = await this.isFileUploaded(filesObj[key]["id"], auth);
       }
       //File uploaded
+      console.log(`File ${filesObj[key]["name"]} uploaded`);
       acc.push(filesObj[key]);
     }, []);
 
