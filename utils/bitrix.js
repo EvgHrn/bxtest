@@ -87,22 +87,11 @@ class Bitrix {
 
     let isError = false;
 
-    const filesInfoArr = await Object.keys(filesObj).reduce(async (acc, key) => {
-      const fileInfo = await this.copyFile(filesObj[key]["id"], folderId, auth);
-      if(!fileInfo)
-        isError = true;
-      acc.push(fileInfo);
-      return acc;
-    }, []);
-
-    if(isError)
-      return false;
-
     let count = 0;
 
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-    const filesObjectsArr = await filesInfoArr.reduce(async (acc, fileInfoObj) => {
+    const filesObjectsArr = await Object.keys(filesObj).reduce(async (acc, key) => {
       let isFullFile = false;
       while(!isFullFile) {
         //File do not uploaded yet
@@ -112,16 +101,27 @@ class Bitrix {
         }
         count++;
         await sleep(SAVE_CHECK_DELAY_MS);
-        isFullFile = await this.isFileUploaded(fileInfoObj["ID"], auth);
+        isFullFile = await this.isFileUploaded(filesObj[key]["id"], auth);
       }
       //File uploaded
-      acc.push(fileInfoObj);
+      acc.push(filesObj[key]);
     }, []);
 
     if(isError)
       return false;
 
-    return filesObjectsArr;
+    const copiedFilesInfoArr = await filesObjectsArr.reduce(async (acc, fileObj) => {
+      const fileInfo = await this.copyFile(fileObj["id"], folderId, auth);
+      if(!fileInfo)
+        isError = true;
+      acc.push(fileInfo);
+      return acc;
+    }, []);
+
+    if(isError)
+      return false;
+
+    return copiedFilesInfoArr;
   };
 
   //return

@@ -77,7 +77,7 @@ app.use(async (req, res, next) => {
             }, []);
           }
           if (eventMessage === undefined) {
-            console.log("Empty messsage");
+            console.log("Empty message");
           }
           //Send incoming msg to all support group
           for (let i = 0; i < supportUsers.length; i++) {
