@@ -59,17 +59,20 @@ app.use(async (req, res, next) => {
             //Message has files
             console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
             const filesObjectsArr = await bitrix.saveFiles(req.body["data"]["PARAMS"]["FILES"], process.env.CHAT_FOLDER_ID, req.body["auth"]);
+            console.log("filesObjectsArr: ", filesObjectsArr);
             if(!filesObjectsArr) {
               console.log("Files saving error");
               break;
             }
             //Attach files
-            for(const fileObj in filesObjectsArr) {
-              const fileUrl = fileObj["DETAIL_URL"];
-              const fileName = fileObj["NAME"];
+            for(let i = 0; i < filesObjectsArr.length; i++) {
+              console.log("fileObj: ", filesObjectsArr[i]);
+              const fileUrl = filesObjectsArr[i]["DETAIL_URL"];
+              const fileName = filesObjectsArr[i]["NAME"];
+              const fileSize = filesObjectsArr[i]["SIZE"];
               console.log("File url: ", fileUrl);
               console.log("File name: ", fileName);
-              attach.push({ FILE: {
+              attach.push({ LINK: {
                   NAME: fileName,
                   LINK: fileUrl
                 }
