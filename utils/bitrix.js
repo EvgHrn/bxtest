@@ -317,13 +317,19 @@ class Bitrix {
       ...params,
       auth: auth["access_token"]
     });
-    console.log("restCommand url: ", `${queryUrl}/?${queryData}`);
+    console.log("restCommand method: ", method);
+    console.log("restCommand params: ", params);
+    console.log("restCommand Url: ", queryUrl);
 
     let result;
     try {
       const response = await fetch(`${queryUrl}/?${queryData}`);
       result = await response.json();
-      console.log("restCommand response: ", result);
+      if("result" in result) {
+        console.log("restCommand response result: ", result["result"]);
+      } else {
+        console.log("restCommand response error: ", result);
+      }
     } catch (err) {
       console.log("restCommand fetch error: ", err);
       return false;

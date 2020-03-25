@@ -48,13 +48,13 @@ app.use(async (req, res, next) => {
         }
         // check the event - authorize this event or not
         if (!bitrix.checkAuth(req.body["auth"]["application_token"])) {
-          console.log("Unauthorize event: ", req.body.event);
+          console.log("Unauthorized event: ", req.body.event);
           return false;
         }
         if (!supportUsers.includes(req.body["data"]["PARAMS"]["FROM_USER_ID"])) {
           //Message from common user
           console.log("Message from common user: ", eventMessage);
-          let attach;
+          let attach = [];
           if (req.body["data"]["PARAMS"]["FILES"]) {
             //Message has files
             console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
@@ -64,17 +64,17 @@ app.use(async (req, res, next) => {
               break;
             }
             //Attach files
-            attach = filesObjectsArr.reduce(async (acc, fileObj) => {
+            for(const fileObj in filesObjectsArr) {
               const fileUrl = fileObj["DETAIL_URL"];
               const fileName = fileObj["NAME"];
               console.log("File url: ", fileUrl);
               console.log("File name: ", fileName);
-              acc.push({ FILE: {
+              attach.push({ FILE: {
                   NAME: fileName,
                   LINK: fileUrl
                 }
               });
-            }, []);
+            }
           }
           if (eventMessage === undefined) {
             console.log("Empty message");
